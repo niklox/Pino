@@ -1,0 +1,149 @@
+<?
+
+if(isset($_SESSION['orderid']))$orderid = $_SESSION['orderid']; else $orderid = -1;
+
+if($orderid > 0)
+print	"<ul id=\"tabs\"><li id=\"info\" class=\"inactive\">ORDERINFORMATION</li><li class=\"active\" id=\"basket\">VARUKORG</li></ul>";
+else
+print	"<ul id=\"tabs\"><li  id=\"info\" class=\"active\">ORDERINFORMATION</li><li class=\"inactive\" id=\"basket\">VARUKORG</li></ul>";
+
+print	"<div id=\"order\">\n";
+
+if($orderid > 0){
+
+	$order = OrderGetByID($orderid);
+	print	"<div id=\"orderbasket\">\n";
+	print	"<div id=\"orderinfo\" class=\"top\">\n" .
+			"<div id=\"orderheadleft\"><h4 class=\"blue\">Min order</h4>";
+	ImagePrint("kassaapparat", "");
+	
+	print	"</div>";
+	print	"<div id=\"orderheadright\">\n";
+	print	"<h6 id=\"invoiceaddress\" class=\"blue\">Fakturaadress</h6>";
+	print	"<form>";
+	print	"<table class=\"orderdetails\">\n";
+	print	"<tr>".
+			"<td class=\"lblleft\"><label for=\"orderfullname\">Namn:*</label></td>" .
+			"<td><input type=\"text\" id=\"orderfullname\" class=\"orderdetails\" value=\"" . $order->getLastName()."\" tabindex=\"1\"/></td>".
+			"<td class=\"lblright\">Företag/skola:</td>".
+			"<td><input type=\"text\" id=\"ordercompanyname\" class=\"orderdetails\" value=\"" . $order->getCompanyName() . "\" tabindex=\"5\"/></td>".
+			
+			"</tr>\n";
+
+	print	"<tr>".
+			"<td class=\"lblleft\"><label for=\"orderaddress\">Adress:*</a></td>" .
+			"<td><input type=\"text\" id=\"orderaddress\" class=\"orderdetails\" value=\"" . $order->getAddress1()."\" tabindex=\"2\"/></td>" .
+			"<td class=\"lblright\"><label for=\"orderemail\">E-post:*</label></td><td><input type=\"text\" id=\"orderemail\" class=\"orderdetails\" value=\"" . $order->getContactEmail()."\" tabindex=\"6\"/></td>".
+			"</tr>\n";
+
+	print	"<tr>".
+			"<td class=\"lblleft\"><label for=\"orderzip\">Postnummer:*</label></td><td><input type=\"text\" id=\"orderzip\" class=\"orderdetails\" value=\"" . $order->getZip() . "\" tabindex=\"3\"/></td>".
+			"<td class=\"lblright\"><label for=\"ordertel\">Telefon:*</label></td><td><input type=\"text\" id=\"ordertel\" class=\"orderdetails\" value=\"" . $order->getAddress2() ."\" tabindex=\"7\"/></td>".
+			"</tr>\n";
+
+	print	"<tr>".
+			"<td class=\"lblleft\"><label for=\"ordercity\">Ort:*</label></td><td><input type=\"text\" id=\"ordercity\" class=\"orderdetails\" value=\"" . $order->getCity()."\" tabindex=\"4\"/></td>".		
+			"<td class=\"lblright\">Referensnr:</td><td><input type=\"text\" id=\"orderreference\" class=\"orderdetails\" value=\"" . $order->getCustomerRef() ."\" tabindex=\"8\"/></td>".
+			"</tr>\n";
+
+	print	"<tr>".
+			"<td class=\"lbltop\">Meddelande:</td><td colspan=\"3\"><textarea id=\"ordermessage\" class=\"orderdetails\" tabindex=\"9\">" . $order->getCustomerComments() . "</textarea></td>".
+			"</tr>\n";
+
+	print	"<tr>".
+			"<td class=\"lbltop\"></td><td colspan=\"3\">";
+	
+	print	"<input class=\"left\" type=\"checkbox\" tabindex=\"10\" id=\"shippingaddress\" ".($order->getResellerID() == 0?"CHECKED":"")."/>\n";
+		
+	print	"Faktura och leveransadressen är samma</td>".
+			"</tr>\n";
+	print	"<input type=\"hidden\" id=\"orderid\" value=\"".$order->getID()."\"/>\n";
+	print	"</table>\n";
+
+	print	"<div id=\"orderheadship\">\n";
+	print	"<h6 class=\"blue\">Leveransadress</h6>";
+	print	"<table class=\"orderdetails\">\n";
+	print	"<tr>".
+			"<td class=\"lblleft\">Namn:</td>" .
+			"<td><input type=\"text\" id=\"ordershipfullname\" class=\"orderdetails\" value=\"" . $order->getShipLastName()."\" tabindex=\"11\"/></td>".
+			"<td class=\"lblright\">Adress:</td>" .
+			"<td><input type=\"text\" id=\"ordershipaddress\" class=\"orderdetails\" value=\"" . $order->getShipAddress1()."\" tabindex=\"13\"/></td>" .
+			"</tr>\n";
+	
+
+	print	"<tr>".
+			"<td class=\"lblleft\">Företag/skola:</td>".
+			"<td><input type=\"text\" id=\"ordershipcompanyname\" class=\"orderdetails\" value=\"" . $order->getShipCompanyName()."\" tabindex=\"12\"/></td>".
+			"<td class=\"lblright\">Postnummer:</td><td><input type=\"text\" id=\"ordershipzip\" class=\"orderdetails\" value=\"" . $order->getShipZip()."\" tabindex=\"14\"/></td>".
+			"</tr>\n";
+
+	print	"<tr>".
+			"<td class=\"lblleft\"</td><td></td>".
+			"<td class=\"lblright\">Ort:</td><td><input type=\"text\" id=\"ordershipcity\" class=\"orderdetails\" value=\"" . $order->getShipCity()."\" tabindex=\"15\"/></td>".
+			"</tr>\n";
+
+		print	"<tr>".
+			"<td class=\"lbltop\">Meddelande till mottagaren:</td><td colspan=\"3\"><textarea id=\"orderrecievermessage\" class=\"orderdetails\" tabindex=\"16\">" . $order->getComments() . "</textarea></td>".
+			"</tr>\n";
+
+	print	"</table>\n";
+	print	"</div>\n";
+
+	print	"</div>\n";
+	
+	print	"</div>\n";
+	
+	print	"<div id=\"orderrows\">\n";
+	print	"<table class=\"ordertable\">" .
+			"<tr class=\"underlined\"><td class=\"head1\">Beskrivning</td><td class=\"head2\">Antal **</td><td class=\"head3\">Pris</td><td class=\"head4\">Summa</td></tr>\n" ;
+	$orderitem = OrderItemGetAllForOrder($order->getID());
+	$tab = 16;
+	while($orderitem = OrderItemGetNext($orderitem)){
+		$tab++;
+		$product = ContentGetByID($orderitem->getProductID());
+		
+		print "<tr><td>" .$product->getTitle() . "</td><td><input type=\"text\" class=\"quantity\" id=\"orderrow_".$orderitem->getID()."\" value=\"" . round($orderitem->getQuantity()) . "\" tabindex=\"".$tab."\"/></td><td>" . number_format($orderitem->getPrice(), 2, ',', ' ') . "</td><td class=\"right\">" . number_format($orderitem->getQuantity() * $orderitem->getPrice(), 2, ',', ' ') ."</td></tr>\n";
+		$ordertotal += $orderitem->getQuantity() * $orderitem->getPrice();
+
+	}
+	
+
+	if($ordertotal < 301)
+		$freightcost = 36;
+	else if($ordertotal < 1001)
+		$freightcost = 48;
+	else if ($ordertotal < 1 || $ordertotal > 1000)
+		$freightcost = 0;
+
+	//Moms ingår med: ". number_format(($ordertotal + $freightcost) * 0.2, 2,  ',', ' ')."
+	print	"<tr><td rowspan=\"2\" class=\"transp_small\">* Obligatoriska fält<br/>** Du kan ändra i antalsrutan på orderraden. Skriver du 0 tas varan bort</td><td  class=\"transp\"></td><td>Frakt</td><td class=\"right\">".number_format($freightcost, 2, ',',' ')."</td></tr>";
+	if($ordertotal > 0)
+	print	"<tr><td class=\"transp\"></td><td>Summa:</td><td class=\"right\">" . number_format($ordertotal + $freightcost, 2, ',', ' ') . "</td></tr>";
+	print	"</table>";
+	print	"</div>";
+	print	"<div id=\"orderbuttons\"><input type=\"button\" id=\"deleteorder\" value=\"TA BORT ORDER\" /> <input type=\"button\" id=\"sendorder\" value=\"SKICKA\" /></div>";
+	print	"</form>";
+	print	"</div>\n";
+}else{
+	
+	print	"<div id=\"orderbasket\" class=\"under\">\n" .
+			"<div id=\"orderinfo\">\n";
+?>
+	<? ImageGet($thiscontent->getID(), 2, "pinochoice") ?>
+	<div id="<? $thiscontent->getTextID(2) ?>"><? $thiscontent->getText(2) ?> </div>
+	
+<?
+	print	"</div>\n" .
+			"</div>\n";
+}
+
+if($orderid > 0)
+print	"<div id=\"ordergenericinfo\" class=\"under\">\n";
+else
+print	"<div id=\"ordergenericinfo\" class=\"top\">\n";
+?>
+
+	<? ImageGet($thiscontent->getID(), 1, "rightimage") ?>
+	<div id="<? $thiscontent->getTextID(1) ?>"><? $thiscontent->getText(1) ?> </div>
+</div>
+</div>
