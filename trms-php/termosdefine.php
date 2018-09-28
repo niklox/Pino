@@ -1,6 +1,6 @@
 <?php
 // Edit this
-define("CURRENT_THEME", "/misty");
+define("CURRENT_THEME", "/pino");
 define("DB_NAME", "Pino");
 define("DB_HOST", "localhost");
 define("DB_USER", "Pino");

@@ -1,0 +1,243 @@
+<?php
+$filename = 'GlobalDB';
+
+if(isset($_REQUEST["sql"]))$sqlstr = $_REQUEST["sql"]; else $sqlstr = "";
+
+if(isset($_REQUEST["stype"]))$stype = $_REQUEST["stype"]; else $stype = "";
+
+if(isset($_REQUEST["orgid"]))$orgid = $_REQUEST["orgid"]; else $orgid = 0;
+if(isset($_REQUEST["orgname"]))$orgname = $_REQUEST["orgname"]; else $orgname = "";
+if(isset($_REQUEST["address1"]))$address1 = $_REQUEST["address1"]; else $address1 = "";
+if(isset($_REQUEST["zipcode"]))$zipcode = $_REQUEST["zipcode"]; else $zipcode = "";
+if(isset($_REQUEST["city"]))$city = $_REQUEST["city"]; else $city = "";
+if(isset($_REQUEST["address2"]))$address2 = $_REQUEST["address2"]; else $address2 = "";
+if(isset($_REQUEST["invoiceaddress"]))$invoiceaddress = $_REQUEST["invoiceaddress"]; else $invoiceaddress = "";
+if(isset($_REQUEST["municipality"]))$municipality = $_REQUEST["municipality"]; else $municipality = "";
+if(isset($_REQUEST["region"]))$region = $_REQUEST["region"]; else $region = "";
+if(isset($_REQUEST["country"]))$country = $_REQUEST["country"]; else $country = "";
+
+if(isset($_REQUEST["email"]))$email = $_REQUEST["email"]; else $email = "";
+if(isset($_REQUEST["telephone"]))$telephone = $_REQUEST["telephone"]; else $telephone = "";
+
+if(isset($_REQUEST["fullname"]))$fullname = $_REQUEST["fullname"]; else $fullname = "";
+if(isset($_REQUEST["cell"]))$cellphone = $_REQUEST["cell"]; else $cellphone = "";
+if(isset($_REQUEST["orgname"]))$orgname = $_REQUEST["orgname"]; else $orgname = "";
+if(isset($_REQUEST["contactname"]))$contactname = $_REQUEST["contactname"]; else $contactname = "";
+if(isset($_REQUEST["contacttel"]))$contacttel = $_REQUEST["contacttel"]; else $contacttel = "";
+if(isset($_REQUEST["contactemail"]))$contactemail = $_REQUEST["contactemail"]; else $contactemail = "";
+if(isset($_REQUEST["contactemails"]))$contactemails = $_REQUEST["contactemails"]; else $contactemails = "";
+if(isset($_REQUEST["students"]))$students = $_REQUEST["students"]; else $students = "";
+if(isset($_REQUEST["year"]))$year = $_REQUEST["year"]; else $year = "";
+
+
+//header('Content-type: application/vnd.xls; charset=utf-8');
+
+header('Content-type: application/vnd.ms-excel; charset=UTF-8');
+header('Content-Disposition: attachment; filename="' . date('Y-m-d H:i:s') . '_' .$filename.'.xls"');
+header("Pragma: no-cache");
+header("Expires: 0");
+
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/termoscommon.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/db.inc.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.User.php'; 
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.User.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.Organisation.php'; 
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.Organisation.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.Topic.php'; 
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.Topic.php';
+DBcnx();
+
+//print stripslashes($sqlstr);
+//print '<br/><br/>';
+//print $stype;
+	
+	$leadingcells = 0;
+	$trailingcells = 0;
+	$counter = 0;
+
+// Start buffering
+  ob_start();
+  
+ print 	'<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">'.
+       	'<html>'.
+    	'<head><meta http-equiv="Content-type" content="text/html;charset=utf-8" /></head>'.
+        '<body>';
+
+  print '<table>';
+  
+  
+  if($stype == 1){
+  
+  $orgs = OrganisationGet(stripslashes($sqlstr));
+  
+  print '<tr>';
+  if($orgid > 0) 			{print '<td>ID</td>'; $leadingcells++;}
+  if($orgname > 0) 			{print '<td>Name</td>'; $leadingcells++;}
+  if($students > 0) 		{print '<td>Students</td>'; $leadingcells++;}
+  if($address1 > 0) 		{print '<td>Street address</td>'; $leadingcells++;}
+  if($zipcode > 0) 			{print '<td>Zipcode</td>'; $leadingcells++;}
+  if($city > 0) 			{print '<td>City</td>'; $leadingcells++;}
+  if($address2 > 0) 		{print '<td>Postal address</td>'; $leadingcells++;}
+  if($invoiceaddress > 0) 	{print '<td>Invoice address</td>'; $leadingcells++;}
+  if($municipality > 0) 	{print '<td>Municipality</td>';$leadingcells++;}
+  if($region > 0) 			{print '<td>Region</td>'; $leadingcells++;}
+  if($country > 0) 			{print '<td>Country</td>'; $leadingcells++;}
+  if($contactname > 0) 		{print '<td>Contact person</td>'; $leadingcells++;}
+  if($contacttel > 0) 		{print '<td>Contact telephone (obsolete)</td>'; $leadingcells++;}
+  if($contactemail > 0) 	{print '<td>Contact email (obsolete)</td>'; $leadingcells++;}
+  if($telephone > 0) 		{print '<td>Telephone</td>'; $leadingcells++;}
+  if($email > 0 || $contactemails > 0) 			{print '<td>E-mail</td>';}
+  
+  if($year > 0){
+  	print 	'<td>Year</td>' .
+  			'<td>Votes</td>' .
+  			'<td>Tot. Students</td>' .
+  			'<td>Std in P</td>' .
+  			'<td>Classes</td>' .
+  			'<td>Max class</td>' .
+  			'<td>Copies</td>' .
+  			'<td>Lang</td>' .
+  			'<td>EN</td>' .
+  			'<td>ES</td>' .
+  			'<td>FR</td>' .
+  			'<td>PT</td>' .
+  			'<td>SW</td>' .
+  			'<td>Other</td>' .
+  			'<td>Other lang</td>' .
+  			'<td>Comment</td>';
+  			
+}
+ 
+  
+  
+  //if($contacttel > 0) print '<td>Contact Telephone</td>';
+  //if($contactemail > 0) print '<td>Contact e-mail</td>';
+  
+  print '</tr>';
+
+  while($orgs = OrganisationGetNext($orgs)){
+
+	print 	'<tr>';
+	if($orgid > 0) print '<td>'.$orgs->getID().'</td>';
+	if($orgname > 0) print '<td>'.$orgs->getOrgName().'</td>';
+	if($students > 0) print '<td>'.$orgs->getExternalID().'</td>';
+  	if($address1 > 0) print '<td>'.$orgs->getAddress1().'</td>';
+  	if($zipcode > 0) print '<td>'.$orgs->getZip().'</td>';
+  	if($city > 0) print '<td>'.$orgs->getCity().'</td>';
+  	if($address2 > 0) print '<td>'.$orgs->getAddress2().'</td>';
+  	if($invoiceaddress > 0) print '<td>'.$orgs->getCoordinates().'</td>';
+  	if($municipality > 0) print '<td>'.MunicipalityGetName($orgs->getMunicipalityID()).'</td>';
+  	if($region > 0) print '<td>'.RegionGetName($orgs->getRegionID()).'</td>';
+  	if($country > 0) print '<td>'.$orgs->getCountryID().'</td>';
+  	if($contactname > 0) print '<td>'.$orgs->getContactName().'</td>';
+  	if($contacttel > 0) print '<td>'.$orgs->getContactTel().'</td>';
+  	if($contactemail > 0) print '<td>'.$orgs->getContactEMail().'</td>';
+  	if($telephone > 0) print '<td>'.$orgs->getTel().'</td>';
+  	
+  	
+  	if($email > 0) print '<td>'.$orgs->getEMail().'</td>';
+  	
+  	if($contactemails > 0){
+  		
+  		$users = UserGetAllInOrganisation($orgs->getID());
+  		
+  		while($users = UserGetNext($users)){
+  			
+  			if( ($email == 0 && $counter > 0) || $email > 0){
+  				print '<tr>';
+  				for($i=0;$i<$leadingcells;$i++){print '<td></td>';}
+  			}
+  			
+  		 	print '<td>' . $users->getAccountName() . '</td>';
+  		 	
+  		 	if( ($email == 0 && $counter > 0) || $email > 0){
+  				for($i=0;$i<$trailingcells;$i++){print '<td></td>';}
+  				print '</tr>';
+  			}
+  			
+  			$counter++;
+  		
+  		}
+  		$counter = 0;
+  	}
+  	
+  	if($year > 0){
+  	
+  	$prg = ProgramGetByYearAndOrganisation($year, $orgs->getID());
+  	
+  	print 	'<td>'. substr($prg->getYear(),0,4).'</td>' .
+  			'<td>' . $prg->getVotes() . '</td>' .
+  			'<td>' . $prg->getStudentsAtSchool() . '</td>' .
+  			'<td>' . $prg->getStudentsInProgram() . '</td>' .
+  			'<td>' . $prg->getNoOfClasses(). '</td>' .
+  			'<td>' . $prg->getMaxClassSize(). '</td>' .
+  			'<td>' . $prg->getCopies() . '</td>' .
+  			'<td>' . LanguageGet($prg->getLanguageID()) . '</td>' .
+  			'<td>' . $prg->getCopiesEN() . '</td>' .
+  			'<td>' . $prg->getCopiesES() . '</td>' .
+  			'<td>' . $prg->getCopiesFR() . '</td>' .
+  			'<td>' . $prg->getCopiesPT() . '</td>' .
+  			'<td>' . $prg->getCopiesSE() . '</td>' .
+  			'<td>' . $prg->getCopiesXX() . '</td>' .
+  			'<td>' . $prg->getAltLang() . '</td>' .
+  			'<td>' . $prg->getComment() . '</td>';
+  	}
+  	
+  	
+  	print 	'</tr>';
+	
+	
+  	
+  	
+	}
+}
+else if($stype == 2){
+
+  	$users = UserGet($sqlstr);
+ 
+  	print '<tr>';
+  	if($fullname > 0) print '<td>Name</td>';
+  	if($email > 0) print '<td>Email/Accountname</td>';
+  	if($cellphone > 0) print '<td>Cellphone</td>';
+  	if($orgname > 0) print '<td>School/Organisation</td>';
+   	print '</tr>';
+   	
+   	while($users = UserGetNext($users)){
+
+	print 	'<tr>';
+	if($fullname > 0) print '<td>'.$users->getFullname().'</td>';
+  	if($email > 0) print '<td>'.$users->getAccountName().'</td>';
+  	if($cellphone > 0) print '<td>'.$users->getCell().'</td>';
+  	if($orgname > 0) print '<td>'.OrganisationGetName($users->getAddressID()).'</td>';
+  	
+	print 	'</tr>';
+	
+	}
+   
+}
+
+
+print '</table>';
+
+print '</body></html>';
+ // Get value of buffering so far
+  $out = ob_get_contents();
+ // Stop buffering
+  ob_end_clean();
+ 
+// Use it and convert it
+ //print iconv("UTF-8", "ISO-8859-1", $out);
+// else if  
+print $out;
+ 
+ 
+ // print iconv("UTF-8", "UTF-16", $out);
+
+  
+  
+
+
+
+
+
+?>
