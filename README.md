@@ -4,7 +4,7 @@ yesr here we have it
 
 ## Another header ##
 
-code(
+code()
 
     var specificLanguage_code = 
     {
@@ -21,4 +21,3 @@ code(
         }
     }
 
-)
