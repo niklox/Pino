@@ -55,7 +55,8 @@ else
 	print '<div id=content>';
 	print '<div id="loginbox">';
 	
-	print	'<form action="/trms-admin/logincheck.php" method="post"/>'.
+	print	
+			'<form action="/trms-admin/logincheck.php" method="post"/>'.
 			'Username or Email Address<br/><input type="text" name="AccountName" id="AccountName" size="28"/><br/>'.
 			'Password<br/><input type="password" name="Password" id="Password" size="25"/><br/>'.
 			'<input type="submit" id="Loginbtn" value="Login"/><br/>'.
