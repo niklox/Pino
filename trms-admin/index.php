@@ -52,8 +52,8 @@ if(isset($admin)){
 }
 else
 {
-	print '<div id=content>';
-	print '<div id="loginbox">';
+	print		'<div id=content>';
+	print 		'<div id="loginbox">';
 	
 	print	
 			'<form action="/trms-admin/logincheck.php" method="post"/>'.
@@ -62,10 +62,7 @@ else
 			'<input type="submit" id="Loginbtn" value="Login"/><br/>'.
 			'</form>';	
 			
-			echo '<pre>';
-var_dump($_SESSION);
-echo '</pre>';
-	
+	//print '<pre>' . var_dump($_SESSION) . '</pre>';
 	
 	print '</div>';
 	print '</div>';
