@@ -1,7 +1,7 @@
 <?php
 
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/termosdefine.php';
-
+/*
 function TermosGetCurrentUserID(){
 
 	if(isset($_COOKIE['TermosCurrentUserID'])){
@@ -18,11 +18,36 @@ function TermosGetCurrentUserID(){
 	else
 		return 0;
 }
-
+*/
+function TermosGetCurrentUserID(){
+		
+	if(isset($_SESSION['TermosCurrentUserID'])){
+	
+		// Check if the user has a valid password set
+		if($user = UserGetUserByID($_SESSION['TermosCurrentUserID']))
+		{
+			if(TermosGetCurrentUserPasswd() == $user->getPassword() )
+				return $_SESSION['TermosCurrentUserID'];
+			else
+				return 0;
+		}
+	}
+	else
+		return 0;
+}
+/*
 function TermosGetCurrentUserPasswd(){
 
 	if(isset($_COOKIE['TermosCurrentUserPasswd']))
 		return $_COOKIE['TermosCurrentUserPasswd'];
+	else
+		return 0;
+}
+*/
+function TermosGetCurrentUserPasswd(){
+
+	if(isset($_SESSION['TermosCurrentUserPasswd']))
+		return $_SESSION['TermosCurrentUserPasswd'];
 	else
 		return 0;
 }

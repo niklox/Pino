@@ -132,8 +132,6 @@ function UserGetUserByID($id){
 	if(!$instance->getDBrows()){
 		exit(' Error in function UserGetUserByID(); No user width ID: '. $id . "<br/> " . mysqli_error($dbcnx) . "<br/>" .$sqlstr);
 	}
-
-	
 	$instance = UserSetAllFromRow($instance);
 
 	return $instance;
@@ -261,9 +259,10 @@ function UserDelete($uid){
 
 	 global $dbcnx;
 	 $sqlstr = "DELETE FROM Users WHERE UserID = " . $uid;
-
+	
+	
 	 // Maybe some more rows in DB to be deleted here //
-	 mysqli_query($dbcnx, $sql);
+	 mysqli_query($dbcnx, $sqlstr);
 }
 
 function UserHasPrivilege($uid, $prid){

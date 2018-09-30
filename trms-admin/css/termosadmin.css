@@ -1,14 +1,28 @@
-body,div,span,p,ul,li,h1,h2,h3,h4,h5,h6{margin:0;padding:0;font-family:arial,helvetica;font-size:12px}
+body,div,span,p,ul,li,h1,h2,h3,h4,h5,h6{margin:0;padding:0;font-family:arial,helvetica;font-size:14px}
 ul{list-style:none}
 form{display:inline;}
 img{border:0}
 td{vertical-align:top}
 textarea{font-size:12px;font-family:Arial, Helvetica}
-input{border:1px solid #7FA5BD; font-family:Arial, Helvetica}
+
+
+select{border: 1px solid #BFBDBD;padding:4px;font-size:16px; height:27px; margin:3px 0 8px 0}
+input{font-style:normal;color:#000000;padding:5px;font-size:16px;}
+input[type=password]{font-style:normal;color:#000000;padding:5px;font-size:16px;}
+input[type=button],[type=submit] {padding:5px 20px;font-size:16px; color:#FFFFFF; background-color:#7FA5BD; cursor: pointer;}
+
 input.wht{border:1px solid #FFFFFF; font-family:Arial, Helvetica;background-color:#7FA5BD;color:#FFFFFF}
 input.whtbtn{float:right;margin:5px 5px 0 0;border:1px solid #FFFFFF; font-family:Arial, Helvetica;background-color:#7FA5BD;color:#FFFFFF}
 input.dark{border:1px solid #FFFFFF; font-family:Arial, Helvetica;background-color:#1B2F44;color:#FFFFFF}
 input.void{border:1px solid #DDDDDD; font-family:Arial, Helvetica;background-color:#7FA5BD;color:#DDDDDD}
+
+
+select.std_select{border: 1px solid #BFBDBD;padding:4px;font-size:16px; height:27px; margin:3px 0 8px 0}
+input.std_input{font-style:normal;color:#000000;padding:5px;font-size:16px;}
+input.std_input_date{font-style:normal;color:#000000;padding:5px;font-size:16px; width:90px; margin: 0 5px}
+input.std_button{padding:5px 20px;font-size:16px; color:#FFFFFF; background-color:#7FA5BD; cursor: pointer;}
+input.std_button_border{padding:5px 20px;font-size:16px; color:#FFFFFF; border: 1px #FFFFFF solid; background-color:#7FA5BD; cursor: pointer;}
+
 
 h6{font-size:13px;margin:5px 0}
 
@@ -26,7 +40,7 @@ overflow: auto;
 }
 
 #pagehead_left{font-family: Georgia,Times,serif;font-size: 24px;padding: 10px 0 10px 10px; width:45%; display:inline; float:left; }
-#pagehead_right{position:absolute;font-size: 12px; padding: 10px 0 10px 0px; overflow:hide;padding-top:20px;width:50%; display:inline; float:left; text-align:right; }
+#pagehead_right{position:absolute;font-size: 12px; padding: 15px 0 10px 0px; overflow:hide;width:50%; display:inline; float:left; text-align:right; }
 .currentlanguage{font-family:Georgia,Times,serif;font-size: 16px; font-weight: normal;font-style:oblique; color:#999999;  letter-spacing:1px; padding-left:50px}
 
 .other{
@@ -47,6 +61,18 @@ font-weight:bold;
 color: #FFFFFF;
 background-color: #AAAAAA;
 }
+
+#loginbox{
+margin:10% auto 20%;
+padding:20px 20px 40px;
+width: 300px;
+border:1px solid #999999;
+font-family: Helvetica, sans-serif;
+font-size: 1em;
+color: #999999;
+}
+#loginbox input{margin:5px 0 10px 0;width:100%}
+#loginbox input[type=submit]{width:30%; float:right}
 
 .dashboardbox{border: 2px #7FA5BD solid; padding:0px;background-color:#DDDDDD;width:500px;margin:15px 15px 0 0;}
 .dashboardbox_head{font-family:serif;font-size:24px;color:#FFFFFF; padding:3px 10px 3px 10px;background-color:#7FA5BD}
@@ -77,13 +103,13 @@ ul#adminsubmenu li a{text-decoration:none;padding:0;padding-left:5px;padding-rig
 #editbox{width:900px;border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;}
 
 #box_head{width:804px;font-family:serif;font-size:24px;color:#FFFFFF; padding:3px 10px 3px 10px;background-color:#7FA5BD}
-#box_body{border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;width:800px;} /**/
+#box_body{border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;width:800px;} 
 
 #box_head_600{width:604px;font-family:serif;font-size:24px;color:#FFFFFF; padding:3px 10px 3px 10px;background-color:#7FA5BD}
-#box_body_600{border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;width:600px;} /**/
+#box_body_600{border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;width:600px;} 
  
  
-.boxes{float:left;width:300px;} /**/ 
+.boxes{float:left;width:300px;} 
 .boxes_white{border:1px solid #FFFFFF;margin:5px;padding:5px;float:left;width:300px}
 .widebox{clear:both;padding:0px;margin:5px;}
 
@@ -110,6 +136,7 @@ ul#adminsubmenu li a{text-decoration:none;padding:0;padding-left:5px;padding-rig
 .adminlist{width:100%;padding:0;margin:0;}
 .column20{width:150px;}
 
+
 /*
  *	Users
  *
@@ -118,9 +145,6 @@ ul#adminsubmenu li a{text-decoration:none;padding:0;padding-left:5px;padding-rig
 #userselect{float:right}
 #userlist_head{font-family:serif;font-size:24px;color:#FFFFFF;width:804px; padding:3px 10px 3px 10px;background-color:#7FA5BD}
 #userlist{width:800px;border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;}
-
-
-
 #useredit_head{font-family:serif;font-size:24px;color:#FFFFFF;width:804px; padding:3px 10px 3px 10px;background-color:#7FA5BD}
 #useredit{width:800px;border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD}
 
@@ -251,7 +275,7 @@ img.iconimg{vertical-align:text-bottom; margin-right:5px;border:0}
 .boxright{float:right;margin:0px;}
 .btnright{float:right;margin:0px;margin-top:10px;}
 .dateline{height:22px}
-.dateinput{margin:0 5px 0 0;width:70px}
+.dateinput{margin:0 5px 0 0;width:90px}
 .timeinput{margin:0 0 0 5px;width:55px}
 .boxline{margin-bottom:10px}
 
@@ -407,8 +431,6 @@ table.orderdetails td.value{width:150px;background-color:#EEEEEE;}
 #dashboard{font-family: Times, Times New Roman, serif; font-size:18px}
 
 /* Discussions */
-
-comments{}
 
 table.commentlist{width:100%}
 table.commentlist td.date{width:20%; text-decoration:underline}

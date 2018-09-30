@@ -1,4 +1,6 @@
 <?php
-setcookie("TermosCurrentUserPasswd", 0, 0, "/");
+session_start();
+$_SESSION["TermosCurrentUserPasswd"] = "";
+$_SESSION["TermosCurrentUserID"] = 0;
 header("Location: /trms-admin/index.php");
 ?>

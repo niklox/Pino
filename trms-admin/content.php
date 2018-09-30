@@ -1,4 +1,5 @@
 <?php
+
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/termoscommon.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/db.inc.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.User.php'; 
@@ -71,30 +72,30 @@ function defaultAction(){
 
 	global $admin, $rid, $nid;
 
-	print	"<div class=\"stdbox_600\" >\n" . //class=\"contentbox\"
-			"<select name=\"rootNodes\" id=\"rootNodes\">\n" .
-			"<option value=\"0\">".MTextGet('selectStructure')."</option>\n";
+	print	'<div class="stdbox_600" >' . //class=\"contentbox\"
+			'<select class="std_select" name="rootNodes" id="rootNodes">' .
+			'<option value="0">'.MTextGet('selectStructure').'</option>';
 
 	$roots = NodeGetAllRoots();
 	while($roots = (NodeGetNext($roots))){
 
-		print "<option value=\"". $roots->getID() ."\" ".($rid == $roots->getID() ? "selected" : "").">" . $roots->getName() . "</option>\n";
+		print '<option value="'. $roots->getID() .'" '.($rid == $roots->getID() ? "selected" : "").'>' . $roots->getName() . '</option>';
 	}
-	print	"</select>\n";
+	print	'</select>';
 
-	print	"<select name=\"nodeTree\" id=\"nodeTree\">\n" ;
+	print	'<select class="std_select" name="nodeTree" id="nodeTree">';
 
 	if($rid > 0){
 		
-		print	"<option value=\"0\">". MTextGet('selectNode') ."</option>\n";
+		print	'<option value="0">'. MTextGet('selectNode') .'</option>';
 		PrintNodeTreeOptions($rid, 0, 0, 0, 1);
 	}
 	else
-	print	"<option value=\"0\">". MTextGet('selectStructureFirst')."</option>\n" ;	
+	print	'<option value="0">'. MTextGet('selectStructureFirst').'</option>';	
+	print	'</select>';
+	print	' <input type="button" class="std_button" id="displayTree" value="' . MTextGet('displayNodeTree') . '">';
 	
-	print	"</select>\n";
-	print	"<input type=\"button\" id=\"displayTree\" value=\"" . MTextGet('displayNodeTree') . "\">";
-	print "</div>\n";
+	print '</div>';
 	print	"<div id=\"list_head\">" .
 			"<form>" . 
 			"<input type=\"hidden\" name=\"action\" id=\"action\" value=\"selectTemplate\">" . 
