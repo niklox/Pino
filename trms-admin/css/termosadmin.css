@@ -97,10 +97,12 @@ ul#adminsubmenu li a{text-decoration:none;padding:0;padding-left:5px;padding-rig
  */
 
 
-#editbox_head{width:904px;font-family:serif;font-size:24px;color:#FFFFFF; padding:3px 10px 3px 10px;background-color:#7FA5BD}
+#editbox_head{width:100%; font-family:serif;font-size:2em;color:#FFFFFF; background-color:#7FA5BD; padding:5px 10px;
+box-sizing: border-box;
+}
 #editbox_head a{color:#FFFFFF;text-decoration:none}
 
-#editbox{width:900px;border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;}
+#editbox{width:100%;border: 2px #7FA5BD solid; background-color:#DDDDDD;box-sizing: border-box;}
 
 #box_head{width:804px;font-family:serif;font-size:24px;color:#FFFFFF; padding:3px 10px 3px 10px;background-color:#7FA5BD}
 #box_body{border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;width:800px;} 
@@ -109,7 +111,7 @@ ul#adminsubmenu li a{text-decoration:none;padding:0;padding-left:5px;padding-rig
 #box_body_600{border: 2px #7FA5BD solid; padding:10px;background-color:#DDDDDD;width:600px;} 
  
  
-.boxes{float:left;width:300px;} 
+.boxes{float:left;width:30%;padding:10px} 
 .boxes_white{border:1px solid #FFFFFF;margin:5px;padding:5px;float:left;width:300px}
 .widebox{clear:both;padding:0px;margin:5px;}
 

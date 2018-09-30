@@ -124,7 +124,7 @@ function editUser($uid){
 	if( $user = UserGetUserByID($uid) )
 	{
 		print '<div id="editbox_head">';
-		print htmlspecialchars($user->getFullname()).' <a title="userlist" href="/trms-admin/users.php?action=default&gid='.$gid.'"><img src="images/edit_mini.gif" border="0" alt="userlist"/></a>';
+		print htmlspecialchars(MTextGet("currentuser") . ': ' . $user->getFullname()).' <a title="userlist" href="/trms-admin/users.php?action=default&gid='.$gid.'"><img src="images/edit_mini.gif" border="0" alt="userlist"/></a>';
 		print '</div>';
 
 		print '<div id="editbox" class="clearfix">' .
@@ -199,7 +199,7 @@ function editUser($uid){
 
 		print '</table>';
 		print '</div>' .
-			  '<div class="boxes">';
+			  '<div class="boxes"><h4>'. MTextGet("privcategories") .'</h4>';
 
 		$priv = PrivilegeGetAll();
 		while($priv = PrivilegeGetNext($priv))
@@ -251,6 +251,8 @@ function saveUser($uid){
 		$user->setInfotext($infotext);
 
 		UserSave($user);
+
+		
 
 		if(isset($_REQUEST["privilege"]))$privilege = $_REQUEST["privilege"];
 		$sqlstr = "DELETE FROM UserPrivCategories WHERE UserID = " . $uid;
