@@ -8,8 +8,8 @@ require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.User.php';
 $account = $_REQUEST['AccountName'];
 $password = $_REQUEST['Password'];
 DBcnx();
-if($user = UserGetUserByAccountName($account))
-{
+
+if($user = UserGetUserByAccountName($account)){
 	
 	if( crypt($password, LEGAL_SALT) == $user->getPassword()){
 	
@@ -25,8 +25,7 @@ if($user = UserGetUserByAccountName($account))
 	}
 	else
 		print "UserID and password does not match! <br/>";
-		
 }
 else
-	print "No user with the accountname: ". $account;
+	print "No user found with the accountname: ". $account;
 ?>
