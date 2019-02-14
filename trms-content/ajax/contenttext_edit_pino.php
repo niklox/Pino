@@ -23,14 +23,16 @@ if($admin = UserGetUserByID(TermosGetCurrentUserID())){
 	global $action, $cid, $textid;
 
 	if( UserHasPrivilege($admin->getID(), 26) || UserHasPriviledgeForLanguage($admin->getID(), TermosGetCurrentLanguage() ) ){
-		
-		if($action == "editText")
+	
+		if($action == "editText"){
 			defaultAction($cid, $textid);
-		else if($action == "saveText")
+			
+		}else if($action == "saveText"){
 			saveText($cid, $textid);
 			//print "Testing function " . date();
-		else
+		}else{
 			defaultAction($cid, $textid);
+		}
 	}else{
 		$language = LanguageGetByID(TermosGetCurrentLanguage());
 		print "No privilege to edit texts in " . $language->getName();
@@ -41,7 +43,7 @@ if($admin = UserGetUserByID(TermosGetCurrentUserID())){
 function defaultAction($cid, $textid){
 	
 	print	'<div id="#output"></div>';
-	print	'<form method="post" id="editcontenttext" action="/trms-content/ajax/contenttext_edit.php" >' .
+	print	'<form method="post" id="editcontenttext" action="/trms-content/ajax/contenttext_edit_pino.php" >' .
 			'<input type="hidden" id="cid" name="cid" value="' . $cid . '"/>' .
 			'<input type="hidden" id="textid" name="textid" value="' . $textid . '"/>' .
 			'<input type="hidden" id="action" name="action" value="saveText"/>' .
@@ -70,6 +72,7 @@ function defaultAction($cid, $textid){
 
 function saveText($cid, $textid){
 	global $textcontent, $languageid, $admin;
+	print $textcontent;
 		
 	$mtext = MTextGetMTextForLanguage($textid, $languageid);
 	$mtext->setTextContent($textcontent);
@@ -80,6 +83,7 @@ function saveText($cid, $textid){
 		$content->setArchiveDate(date('Y-m-d H:i:s'));
 		ContentSave($content);
 	}
+	
 }
 
 function loadscripts(){

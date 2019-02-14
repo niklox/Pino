@@ -286,6 +286,26 @@ function MTextGetMText($textid){
 	return $instance;
 }
 
+function MTextGetMTextSortByLanguageOrder($textid){
+ global $dbcnx, $mtext_select;
+ $instance = new MText;
+ $sqlstr = $mtext_select . ' AS Texts, Languages AS L WHERE Texts.TextID = "'.$textid.'" AND L.LanguageID = Texts.LanguageID ORDER BY L.SortOrder';
+ 
+	
+	$row = @mysqli_query($dbcnx, $sqlstr);
+	$numrows = mysqli_num_rows($row);
+	$instance->setDBrows($row);
+
+	if(!$instance->getDBrows()){
+		exit(" Error in functionMTextGetMTextSortByLanguageOrder(); No MText width ID: ". $textid. "<br/>" . $sqlstr . "<br/>". mysqli_error($dbcnx) );
+	}
+	
+	//$instance = MTextSetAllFromRow($instance);
+
+	
+	return $instance;
+}
+
 function MTextGetMTextForLanguage($textid, $languageid){
  global $dbcnx, $mtext_select;
  $instance = new MText;
@@ -340,6 +360,33 @@ function MTextGet($textID){
 		
 		// $returnstr = @mysql_result($result, 0);
 		// return stripslashes($returnstr); replaced 180115 ///
+		
+		$returnstr = mysqli_fetch_assoc($result);
+		return stripslashes($returnstr['TextContent']);
+	}
+
+	//if( @mysql_result($result, 0) != "no text" && @mysql_result($result, 0) != "." )){ //
+}
+
+function MTextGetByLanguage($textID, $languageID){
+	global $dbcnx;
+	$sql = "SELECT TextContent FROM Texts WHERE TextID = '" . $textID . "' AND LanguageID = ". $languageID;
+	//print $sql;
+	$result = @mysqli_query($dbcnx, $sql);
+	
+	if(mysqli_num_rows($result) == 0){
+		$sql = "SELECT TextContent FROM Texts WHERE TextID = '" . $textID . "' AND LanguageID = ". TermosGetDefaultLanguage();
+		$result = @mysqli_query($dbcnx, $sql);
+	}
+
+	if(mysqli_num_rows($result) == 0){
+		$returnstr = "NOID " . $textID;
+		return $returnstr;
+	}
+	else {
+		
+		// $returnstr = @mysql_result($result, 0); removed 180110
+		// return stripslashes($returnstr);
 		
 		$returnstr = mysqli_fetch_assoc($result);
 		return stripslashes($returnstr['TextContent']);
@@ -446,6 +493,24 @@ function MTextGetAllInCategory($textcatID){
 	return $mtext;
 }
 
+function MTextGetAllByTextContent($textstring){
+	global $dbcnx, $mtext_select;
+	$mtext = new MText;
+	$sql = $mtext_select . " WHERE TextContent LIKE '%" . $textstring . "%' AND LanguageID=" . TermosGetCurrentLanguage() . " ORDER BY TextID"; 
+	//$sql = $mtext_select . " WHERE TextCategoryID=" . $textcatID . " ORDER BY TextID"; 
+	
+
+	$row = @mysqli_query($dbcnx, $sql);
+	$mtext->setDBrows($row);
+
+	if(!$mtext->getDBrows()){
+		exit(' Error in function MTextGetAllByContent(): ' . mysqli_error($dbcnx) );
+	}
+
+	return $mtext;
+}
+
+
 function MTextChangeTextCategory($mtextid, $textcatid){
 	global $dbcnx;
 	
@@ -466,6 +531,23 @@ function MTextGetCategoryID($textid,$languageid){
 		$row = mysqli_fetch_assoc($result);
 		return $row['TextCategoryID'];
 	}
+}
+
+function MTextCopyMText($src_textid, $src_textcategory, $textcontent){
+
+	$mtext = MTextNewInCategory($src_textcategory, $textcontent);
+	
+	$src_mtext = MTextGetMText($src_textid);
+	while($src_mtext = MTextGetNext($src_mtext)){
+		$mtext->setID($mtext->getID());
+		$mtext->setTextCategoryID($src_mtext->getTextCategoryID());
+		$mtext->setLanguageID($src_mtext->getLanguageID());
+		$mtext->setTextPosition($src_mtext->getTextPosition());
+		$mtext->setTextContent($src_mtext->getTextContent());
+		MTextUpdateTextContent($mtext);
+	}
+	
+	return $mtext->getID();
 }
 
 ?>

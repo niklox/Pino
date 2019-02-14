@@ -1,8 +1,11 @@
 <?php
+session_start();
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/termoscommon.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/db.inc.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.User.php'; 
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.User.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.Privileges.php'; 
+require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.Privileges.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.Texts.php'; 
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/functions.Texts.php';
 
@@ -11,8 +14,11 @@ if(isset($_REQUEST["uid"]))$uid = $_REQUEST["uid"];
 if(isset($_REQUEST["accountname"]))$accountname = $_REQUEST["accountname"];
 if(isset($_REQUEST["textid"]))$textid = $_REQUEST["textid"];
 if(isset($_REQUEST["languageid"]))$languageid = $_REQUEST["languageid"];
-if(isset($_REQUEST["textcatid"]))$textcategoryid = $_REQUEST["textcatid"];
+if(isset($_REQUEST["textcatid"]))$textcategoryid = $_REQUEST["textcatid"]; else $textcategoryid = 0;
+if(isset($_REQUEST["searchtextid"]))$searchtextid = $_REQUEST["searchtextid"];
+if(isset($_REQUEST["searchtextcontent"]))$searchtextstr = $_REQUEST["searchtextcontent"];
 DBcnx();
+
 htmlStart();
 
 include $_SERVER['DOCUMENT_ROOT'] . '/trms-admin/head.php';
@@ -24,13 +30,12 @@ if(isset($admin))
 {
 	global $action, $textid, $languageid, $textcategoryid;
 
-	
 	if( UserHasPrivilege($admin->getID(), 1) ){
-	
+
 		if($action == "insertlanguage" && isset($textid) && isset($languageid))
 			insertLanguage( $textid,  $textcategoryid, $languageid );
 		else if($action == "edit" && isset($textid))
-			editMText($textid, $textcategoryid);
+			editMText($textid, $textcategoryid, 0);
 		else if ($action == "savetext" && isset($textid))
 			saveMText($textid, $textcategoryid, $languageid);
 		else if ($action == "deletemtextlanguage" && isset($textid))
@@ -41,11 +46,15 @@ if(isset($admin))
 			createMText($textid, $textcategoryid);
 		else if ($action == "changetextcategory" && isset($textid))
 			changeTextCategory($textid, $textcategoryid);
+		else if ($action == "searchtextbyid")
+			searchTextByID($searchtextid, $textcategoryid);
+		else if ($action == "searchtextbycontent")
+			searchTextByContent($searchtextstr, $textcategoryid);
+		
 		else
 			defaultAction($textcategoryid);
-
 	}else{
-		print "No permission";
+		print "User has not privilege: 1." . PrivilegeGetName(1);
 	}
 }
 else
@@ -58,26 +67,10 @@ htmlEnd();
 $action = "";
 
 function defaultAction( $textcategoryid ){
-
-	print "<div class=\"stdbox_800\">\n" .
-			  "<form>\n<select name=\"textcatid\"><option>". MTextGet('selectTextCat') . "\n";
-
-		$textcategory = TextCategoryGetAll();
-		while($textcategory = TextCategoryGetNext($textcategory))
-		{
-			if($textcategoryid == $textcategory->getID())
-				print "<option value=\"".$textcategory->getID()."\" selected>". MTextGet($textcategory->getTextCategoryNameTextID()) . "</option>\n";
-			else
-				print "<option value=\"".$textcategory->getID()."\">". MTextGet($textcategory->getTextCategoryNameTextID()) . "</option>\n";
-		}
-
-		print "</select>\n" .
-			  " <input type=\"submit\" value=\"Visa\"/>\n" .
-			  "</form>\n" .
-			  "</div>\n";
-
-		if($textcategoryid)
-		displayTextCategory($textcategoryid);
+	global $admin;
+	searchBoxes($textcategoryid);
+	if($textcategoryid)
+	displayTextCategory($textcategoryid);
 }
 
 function displayTextCategory($textcategoryid){
@@ -91,8 +84,8 @@ function displayTextCategory($textcategoryid){
 		print "<div id=\"mtextlist_head\">All texts in " . MTextGet($textcategory->getTextCategoryNameTextID()) .			  "\n<form>\n" .
 			  "<input type=\"hidden\" name=\"textcatid\" value=\"" . $textcategoryid . "\">\n" .
 			  "<input type=\"hidden\" name=\"action\" value=\"newtext\">\n" .
-			  "<input type=\"text\" name=\"textid\" value=\"\" maxlength=\"20\">\n" .
-			  "<input type=\"submit\" value=\"" . MTextGet('createMText') . "\">\n" .
+			  "<input type=\"text\" class=\"std_input\" name=\"textid\" value=\"\" maxlength=\"20\">\n" .
+			  "<input type=\"submit\" class=\"std_button_border\" value=\"" . MTextGet('createMText') . "\">\n" .
 			  "</form>\n" .
 			  "</div>\n" .
 			  "<div id=\"mtextlist\">" .
@@ -101,30 +94,29 @@ function displayTextCategory($textcategoryid){
 		
 		while($mtext = MTextGetNext($mtext))
 		{
-			$counter++;
 			print "<tr><td class=\"column20\">" . 
 				  "<a href=\"/trms-admin/mtext.php?action=edit&textid=". $mtext->getID() . "&textcatid=". $mtext->getTextCategoryID() ."\"><img src=\"images/edit_mini.gif\" border=\"0\" alt=\"edit mtext\" align=\"absmiddle\"/></a>  " 
 				  . $mtext->getID() . 
 				  "</td><td><img src=\"images/delete_mini.gif\" border=\"0\" alt=\"delete mtext\" align=\"absmiddle\" onclick=\"deleteMText('" .  $mtext->getID(). "'," . $mtext->getTextCategoryID() . ")\"/> <i>" . $mtext->getTextContent() . 
-				  "</i>";
-			print "</td></tr>\n";
+				  "</i></td></tr>\n";
 		}
-		print "<tr><td>".$counter."</td></tr>";
 		print "</table>\n"  .
 			  "</div>\n";
 	}
 }
 
-function editMText($textid, $textcategoryid){
+function editMText($textid, $textcategoryid, $searchaction){
 	
 	$language = new Language;
 	$mtext = new MText;
+	
+	if($searchaction == 0)searchBoxes($textcategoryid);
 
 
 	$textcategory = TextCategoryGetByID($textcategoryid);
 
 	print "<div id=\"mtextlist_head\">Text ID: " . $textid . "<input type=\"button\" class=\"whtbtn\" value=\"Display all texts in " . MTextGet($textcategory->getTextCategoryNameTextID()) . " \" onclick=\"location.href='/trms-admin/mtext.php?textcatid=" . $textcategoryid . "'\"/></div>\n";
-	print "<div class=\"stdbox_800\">\n".
+	print "<div class=\"stdbox\">\n".
 		  "<form>\n" .
 		  "<input type=\"hidden\" name=\"textid\" value=\"" . $textid . "\">\n" .
 		  "<input type=\"hidden\" name=\"textcatid\" value=\"" . $textcategoryid . "\">\n" .
@@ -157,7 +149,7 @@ function editMText($textid, $textcategoryid){
 	
 	print "<br/><br/>\n";
 	
-	$mtext = MTextGetMText($textid);
+	$mtext = MTextGetMTextSortByLanguageOrder($textid);
 	while($mtext = MTextGetNext($mtext)){
 
 		if($language = LanguageGetByID($mtext->getLanguageID()))
@@ -167,8 +159,8 @@ function editMText($textid, $textcategoryid){
 				"<input type=\"hidden\" name=\"textcatid\" value=\"" .  $mtext->getTextCategoryID() . "\"/>\n" .
 				"<input type=\"hidden\" name=\"languageid\" value=\"" .  $mtext->getLanguageID() . "\"/>\n" .
 				"<a href=\"/trms-admin/mtext.php?action=deletetext&textid=" . $mtext->getID() ."&languageid=" . $mtext->getLanguageID() . "&textcatid=". $mtext->getTextCategoryID() ."\">\n" .
-				"<img src=\"/img/delete_mini.gif\" border=\"0\"/></a><br/>\n" .
-				"<textarea rows=\"7\" cols=\"95\" name=\"textcontent\">" . $mtext->getTextContent() . "</textarea><br/>\n" .
+				"<img src=\"images/delete_mini.gif\" border=\"0\"/></a><br/>\n" .
+				"<textarea rows=\"2\" cols=\"95\" name=\"textcontent\">" . stripslashes($mtext->getTextContent()) . "</textarea><br/>\n" .
 				"<input type=\"submit\" value=\"" . MTextGet('save') . "\"/> <input type=\"button\" value=\"" . MTextGet('deletetextforlang') . " " . MTextGet($language->getLanguageNameTextID()) . "\" onclick=\"deleteMTextForLanguage('".$mtext->getID()."',".$mtext->getLanguageID().",'".MTextGet($language->getLanguageNameTextID())."',".$mtext->getTextCategoryID().")\"/>\n</form>\n<br/><br/>\n";
 	}
 	print "</div>\n";
@@ -183,7 +175,7 @@ function saveMText($textid, $textcategoryid, $languageid){
 	$mtext->setTextContent($textcontent);
 	
 	MTextUpdateTextContent($mtext);
-	editMText($textid, $textcategoryid, $languageid);
+	editMText($textid, $textcategoryid, 0);
 }
 
 function createMText($textid, $textcategoryid){
@@ -207,7 +199,7 @@ function createMText($textid, $textcategoryid){
 		
 		 MTextUpdateTextContentCopyAllLanguages($newmtext);
 	}
-	editMText($textid, $textcategoryid);
+	editMText($textid, $textcategoryid, 1);
 }
 
 
@@ -251,8 +243,79 @@ function insertLanguage( $textid, $textcategoryid, $languageid ){
 		$newmtext->setTextContent(".");
 		MTextInsertLanguage($newmtext);
 	
-		editMText($textid, $textcategoryid);
+		editMText($textid, $textcategoryid, 0);
 	}
+
+}
+
+function searchTextByID($searchtextid, $textcategoryid){
+
+	searchBoxes($textcategoryid);
+
+	$mtext = MTextGetMText($searchtextid);
+	
+	if(mysqli_num_rows($mtext->dbrows) < 1){
+		print '<span style="font-size:14px">' . MTextGet("MTextNotFound") . ' ' . $searchtextid .'</span> ';
+		print '<input type="button" class="std_button" onclick="location.href=\'/trms-admin/mtext.php\'" value="'.MTextGet("return").'" />';
+		return;
+	}
+	MTextGetNext($mtext);
+	$textcatid = MTextGetCategoryID($searchtextid,TermosGetCurrentLanguage());
+	
+	editMText($searchtextid, $textcatid, 1);
+
+}
+
+function searchTextByContent($searchtextstr, $textcategoryid){
+
+	searchBoxes($textcategoryid);
+
+	if($mtext = MTextGetAllByTextContent($searchtextstr))
+	{
+		print '<div id="mtextlist_head">All texts with content: "' . $searchtextstr . '"' . '</div>' .
+			  '<div id="mtextlist">' .
+			  '<table class="adminlist">';
+		
+		while($mtext = MTextGetNext($mtext))
+		{
+			print '<tr><td class="column20">' . 
+				  '<a href="/trms-admin/mtext.php?action=edit&textid='. $mtext->getID() . '&textcatid='. $mtext->getTextCategoryID() .'">'.
+				  '<img src="images/edit_mini.gif" border="0" alt="edit mtext" align="absmiddle"/></a> '. $mtext->getID() . 
+				  '</td><td><img src="images/delete_mini.gif" border="0" alt="delete mtext" align="absmiddle" onclick="deleteMText("' .  $mtext->getID(). '","' . $mtext->getTextCategoryID() . ')"/>'.
+				  ' <i>' . $mtext->getTextContent() . '</i>'.
+				  '<td>';
+			print '</td></tr>';
+		}
+		print '</table>' .
+			  '</div>';
+	}
+}
+
+function searchBoxes($textcategoryid){
+
+	print '<div class="stdbox">' .
+		  '<form><select class="stdselect2" name="textcatid"><option>'. MTextGet("selectTextCat") . '</option>';
+
+	$textcategory = TextCategoryGetAll();
+	while($textcategory = TextCategoryGetNext($textcategory)){
+		print '<option value="'.$textcategory->getID().'" '.($textcategoryid == $textcategory->getID()?"selected":"").'>'. MTextGet($textcategory->getTextCategoryNameTextID()) . '</option>';
+	}
+
+	print 	'</select>' .
+		  	' <input class="std_button" type="submit" value="'.MTextGet("show").'"/>' .
+		  	'</form> ';
+			  
+	print 	'<form>'.
+			'<input type="hidden" name="action" value="searchtextbyid"/>'.
+		 	'<input type="text" placeholder="MTextID" name="searchtextid" id="searchtextid" class="std_input" />'.
+			' <input class="std_button" type="submit" value="'.MTextGet("search").'"/>'.
+			'</form>';
+	print 	'<form>'.
+			'<input type="hidden" name="action" value="searchtextbycontent"/>'.
+			' <input type="text" placeholder="Text content" name="searchtextcontent" id="searchtextcontent" class="std_input" />'.
+			' <input class="std_button" type="submit" value="'.MTextGet("search").'"/>'.
+			'</form>';
+	print	 '</div>';
 
 }
 
@@ -265,6 +328,9 @@ function htmlStart(){
 		  "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n" .
 		  "<title>Termos MText</title>\n" .
 		  "<link rel=\"stylesheet\" href=\"css/termosadmin.css\"/>\n" .
+		  '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' .
+		  '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script>' .
+		  '<script type="text/javascript" src="/trms-admin/js/content_admin.js"></script>' .
 		  "<script>\n" .
 		  "function deleteMTextForLanguage(mtextid, languageid, language, textcatid){\n" .
 		  "	if(confirm('" . MTextGet("deleteMTextForLang") . "  ' + language + '?'))\n" .

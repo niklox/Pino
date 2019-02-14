@@ -1,0 +1,168 @@
+/*span,p,ul,li,h1,h2,h3,h4,h5,h6{margin:0;padding:0;font-family:arial,helvetica;font-size:12px;color:#666666}*/
+
+
+/* 
+ * Customize the label (the container) 
+ * style the checkboxes from W3Schools
+ */
+
+.container	 {
+ 
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin: 20px 0;
+  cursor: pointer;
+  font-size: 1em;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: -5px;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #fff;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+
+
+/* Order */
+
+.ordertemplate{width:65%; margin: 0 auto;}
+.ordertemplate img{width:40%; margin:20px 0}
+
+#order{
+			width:100%;
+			margin: 0 auto;
+			-webkit-border-radius: 5px;
+			-khtml-border-radius: 5px;
+			border-radius: 5px;
+			min-height:300px;
+			background:#FFD900; 
+			 /*padding:20px;*/ 
+			 /*box-sizing:border-box*/
+}
+#order h4{font-family: "Arial Rounded MT Bold"; font-size:1.7em; margin:20px 0 10px }
+
+#orderbasket{margin:0 auto 20px; padding:0 0 20px 0; width:100%; overflow:hidden}
+#ordergenericinfo{margin:60px 0;}
+#ordergenericinfo p{line-height:1.4em; font-size:1.3em}
+
+
+#tabs		{margin:10px 0 5px 20px}
+#tabs li{
+				display:inline;
+				border-top:2px solid #7FD4F7;
+				border-left:2px solid #7FD4F7;
+				border-right:2px solid #7FD4F7;
+				border-bottom:0;
+				padding: 5px;
+				margin-right:5px;
+				-webkit-border-top-left-radius: 5px;
+				-webkit-border-top-right-radius: 5px;
+				-khtml-border-top-left-radius: 5px;
+				-khtml-border-top-right-radius: 5px;
+				-moz-border-radius-topleft: 5px;
+				-moz-border-radius-topright: 5px;
+				border-top-left-radius: 5px;
+				border-top-right-radius: 5px;
+				cursor:pointer
+			
+}
+.over{display:block}
+.under{display:none}
+#tabs li.active	{color:#FFFFFF;background-color:#7FD4F7}
+#orderinfo{padding:10px 0 10px 0}
+#orderinfo:after{content: "."; visibility: hidden; display: block; height: 0;clear: both; }
+#orderhead{display:block;margin-bottom:20px}
+#orderheadship{display:block}
+
+#orderrows{margin-bottom:10px}
+.orderheaders{margin:50px 0}
+
+table.ordertable{width:100%; border-width:0; border-style:hidden; border-collapse: collapse; background-color:#FFD900}
+table.ordertable td.head1{font-size: 11px; font-style: italic; background-color:#FFD900; border-bottom:1px solid #000000; padding:5px 5px;width:60%}
+table.ordertable td.head2{font-size: 11px; font-style: italic; background-color:#FFD900; border-bottom:1px solid #000000; padding:5px 5px;width:10%}
+table.ordertable td.head3{font-size: 11px; font-style: italic; background-color:#FFD900; border-bottom:1px solid #000000; padding:5px 5px;width:15%}
+table.ordertable td.head4{text-align:right;font-size: 11px; font-style: italic; background-color:#FFD900; border-bottom:1px solid #000000; padding:5px 5px;width:15%}
+table.ordertable td{font-size: 14px; border-width:2px; border-style:solid; border-color:#FFFFFF;background-color:#FFD900; padding:8px 5px;}
+table.ordertable td.right{text-align:right}
+table.ordertable td.transp{background-color:#FFD900;}
+table.ordertable td.transp_small{background-color:#FFD900;font-size:12px;vertical-align:top}
+table.ordertable {background-color:#FFD900; border-bottom: 1px solid #000000}
+.pcs{position: relative; width:100%; }
+.add{position:absolute; top:-6px;left:30px; background:#FFD900; color:#FFFFFF; padding:0; font-size:1em; border:0; cursor:pointer;z-index:1}
+.sub{position:absolute; top:6px;left:31px; background:#FFD900; color:#FFFFFF; padding:0; font-size:1em; text-align:right; border:0; cursor:pointer;z-index:0}
+.gotoshop{color:#000000; border:1px #000000 solid; cursor:pointer; background: transparent; font-size:14px; padding:5px; float:right}
+textarea#ordermessage{height:100px;width:100%;margin:0}
+
+input.quantity{font-size:14px; width:20px; padding:1px; margin:0;}
+
+#orderbuttons{width:100%;text-align:right}
+
+#sendorder,#deleteorder, #discountbutton{	
+			border: 1px solid #000000;
+			font-family:"Arial Rounded MT Bold", "Helvetica Rounded", Arial, Helvetica, sans-serif;
+			font-size:18px; 
+			font-weight:bold; 
+			
+			background-color:#FFFFFF;
+			color:#000000;
+			padding:3px 10px;
+			cursor:pointer;
+			margin-left:5px; 
+		
+}
+#discountbutton{float:left;margin-left:15px; text-align:center}
+#discountcode{height:20px; padding:3px 10px;font-size:14px;width:300px;border: 1px solid #DD0000;float:left;
+

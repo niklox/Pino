@@ -2,8 +2,10 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title> <?php print $currentnode->getName() ?></title>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+	<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+	<!-- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script> -->
 <?php
 	if(isset($currentuser)){
 		print	"<!-- this is the admin scripts -->\n" .
@@ -32,13 +34,13 @@
 <body class="main">
 
 <div id="fb-root"></div>
-<script>(function(d, s, id) {
+<script>/*(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) {return;}
   js = d.createElement(s); js.id = id;
   js.src = "//connect.facebook.net/sv_SE/all.js#xfbml=1&appId=275809749113825";
   fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+}(document, 'script', 'facebook-jssdk'));*/</script>
 
 	<div id="page">
 		<div id="topofhead"><div class="fb-like" data-href="http://www.facebook.com/pages/Pino/121548821232980" data-send="false" data-layout="button_count" data-width="40" data-show-faces="false" data-font="arial"></div>&nbsp;<a href="/contact-english"><img src="/trms-content/misty/images/unionjack.png" width="20" height="12"/></a></div>

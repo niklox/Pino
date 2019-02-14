@@ -1,4 +1,5 @@
 <?php
+session_start();
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/termoscommon.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/db.inc.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.Forms.php'; 
@@ -490,17 +491,26 @@ function copyForm($formid){
 
 		$trgFormInput = new FormInput;
 
-		$mtext = MTextNewInCategory("formItemTexts", $srcFormInput->getTitle());
-		MTextUpdateTextContentCopyAllLanguages($mtext);
-		$trgFormInput->setTitleTextID($mtext->getID());
+		//$mtext = MTextNewInCategory("formItemTexts", $srcFormInput->getTitle());
+		//MTextUpdateTextContentCopyAllLanguages($mtext);
+		//$trgFormInput->setTitleTextID($mtext->getID());
+		
+		$mtextid = MTextCopyMText($srcFormInput->getTitleTextID(), "formItemTexts", $srcFormInput->getTitle());
+		$trgFormInput->setTitleTextID($mtextid);
 
-		$mtext = MTextNewInCategory("formItemTexts", $srcFormInput->getQuestion());
-		MTextUpdateTextContentCopyAllLanguages($mtext);
-		$trgFormInput->setQuestionTextID($mtext->getID());
+		//$mtext = MTextNewInCategory("formItemTexts", $srcFormInput->getQuestion());
+		//MTextUpdateTextContentCopyAllLanguages($mtext);
+		//$trgFormInput->setQuestionTextID($mtext->getID());
+		
+		$mtextid = MTextCopyMText($srcFormInput->getQuestionTextID(), "formItemTexts", $srcFormInput->getQuestion());
+		$trgFormInput->setQuestionTextID($mtextid);
 
-		$mtext = MTextNewInCategory("formItemTexts", $srcFormInput->getComment());
-		MTextUpdateTextContentCopyAllLanguages($mtext);
-		$trgFormInput->setCommentTextID($mtext->getID());
+		//$mtext = MTextNewInCategory("formItemTexts", $srcFormInput->getComment());
+		//MTextUpdateTextContentCopyAllLanguages($mtext);
+		//$trgFormInput->setCommentTextID($mtext->getID());
+		
+		$mtextid = MTextCopyMText($srcFormInput->getCommentTextID(), "formItemTexts", $srcFormInput->getComment());
+		$trgFormInput->setCommentTextID($mtextid);
 
 		$trgFormInput->setFormID($trgFormID);
 		$trgFormInput->setPageNo($srcFormInput->getPageNo());
@@ -524,9 +534,12 @@ function copyForm($formid){
 			$forminputoptioncountervalue = TermosGetCounterValue("FormItemOptionID");
 			$forminputoptioncountervalue++;
 
-			$mtext = MTextNewInCategory("formItemTexts", $srcFormInputOption->getLabel());
-			MTextUpdateTextContentCopyAllLanguages($mtext);
-			$trgFormInputOption->setTextID($mtext->getID());
+			//$mtext = MTextNewInCategory("formItemTexts", $srcFormInputOption->getLabel());
+			//MTextUpdateTextContentCopyAllLanguages($mtext);
+			//$trgFormInputOption->setTextID($mtext->getID());
+			
+			$mtextid = MTextCopyMText($srcFormInputOption->getTextID(), "formItemTexts", $srcFormInputOption->getLabel());
+			$trgFormInputOption->setTextID($mtextid);
 			
 			$trgFormInputOption->setID(0);
 			$trgFormInputOption->setFormItemID($trgFormInputID);

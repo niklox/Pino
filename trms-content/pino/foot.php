@@ -1,15 +1,9 @@
+<?php
+print '<input type="hidden" id="cid" value="'.$thiscontent->getID().'"/>'; 
+?>
+<div id="overlay">&nbsp;</div>
+<div id="loader"><img src="/trms-content/pino/images/Spinner-1s-200px.gif"/></div>
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script>
- 
- $(function() {
- 	
- 	$("#menuicon").click(function(){
- 	
- 		$("#navigate").toggle();
- 	
- 	});
- 	
- });
-</script>
+<script type="text/javascript" src="/trms-content/pino/js/pino.js"></script>
+
 </html>

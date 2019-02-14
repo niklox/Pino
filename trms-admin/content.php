@@ -115,40 +115,60 @@ function editContent($cid, $nid){
 	//print	"<div id=\"imagedialog\"><div>";
 
 	
-	print	"<div class=\"contentbox\">\n" . 
-			"<div class=\"contentboxhead\">Content: ". strip_tags($content->getTitle()). "<input type=\"button\" class=\"whtbtn\" value=\"Reload\" onclick=\"location.href='content.php?action=editContent&cid=".$cid."&nid=".$nid."'\"> <input type=\"button\" class=\"whtbtn\" id=\"delete\" value=\"". MTextGet("deleteContent") . "\" onclick=\"deleteContent(".$content->getID().")\"/> &nbsp;<input type=\"button\" class=\"whtbtn\" id=\"templatedescr\" value=\"". MTextGet("templatedescription") ."\"/> </div>\n" .
-			"<div class=\"contentboxinner\">". 
-			"<h5 class=\"texthead_u\">Texts</h5> " .
-			"<form id=\"contentTexts\" method=\"post\">\n" .
-			"<input type=\"hidden\" name=\"action\" id=\"action\" value=\"saveTextContent\"/>\n" .
-			"<input type=\"hidden\" name=\"cid\" id=\"cid\" value=\"".$content->getID()."\"/>\n". 
-			"<input type=\"hidden\" name=\"nid\" id=\"nid\" value=\"".$nid."\"/>\n";	
+	print	'<div class="contentbox">' . 
+			'<div class="contentboxhead">Content: '. strip_tags($content->getTitle()) .
+			'<form id="contentTexts" method="post">' .
+			'</div>';
+			
+	print	'<div class="contentboxinner">'. 
+	
+			'<input type="button" class="meta" value="'. MTextGet("saveToAllLanguages") .'" onclick="saveToAllLanguages()"/>'. 
+			'<input type="submit" class="meta" value="'. MTextGet("saveContentTexts") .'"/>'.
+			'<input type="button" class="meta" value="Reload" onclick="location.href=\'content.php?action=editContent&cid='.$cid.'&nid='.$nid.'\'">' . 
+			'<input type="button" class="meta" id="delete" value="'. MTextGet("deleteContent") . '" onclick="deleteContent('.$content->getID().')"/>' .
+			'<input type="button" class="meta" id="templatedescr" value="'. MTextGet("templatedescription") .'"/> ' .
+			'<h5 class="texthead_u">Texts</h5> ' .
+		
+			'<input type="hidden" name="action" id="action" value="saveTextContent"/>' .
+			'<input type="hidden" name="cid" id="cid" value="'.$content->getID().'"/>'. 
+			'<input type="hidden" name="pos" id="pos" value=""/>'. 
+			'<input type="hidden" name="nid" id="nid" value="'.$nid.'"/>';	
 
 	$mtext = MTextGetMTextByLanguage($content->getTitleTextID(), TermosGetDefaultLanguage());
-	print	"<h5 class=\"texthead\"><a href=\"mtext.php?action=edit&textid=".$mtext->getID()."&textcatid=".$mtext->getTextCategoryID()."\">Title</a></h5>\n" .
-			"<textarea class=\"widetext\" name=\"" . $content->getTitleTextID() . "\" id=\"". $content->getTitleTextID() ."\">" . $content->getTitle() ."</textarea><br/>\n";
+	print	'<h5 class="texthead"><a href="mtext.php?action=edit&textid='.$mtext->getID().'&textcatid='.$mtext->getTextCategoryID().'">Title</a></h5>' .
+			'<input type="text" class="wideinput" name="' . $content->getTitleTextID() . '" id="'. $content->getTitleTextID() .'" value="'.$content->getTitle().'"/>';
+	
 	$mtext = MTextGetMTextByLanguage($content->getPermalinkTextID(), TermosGetDefaultLanguage());
-	print	"<h5 class=\"texthead\"><a href=\"mtext.php?action=edit&textid=".$mtext->getID()."&textcatid=".$mtext->getTextCategoryID()."\">Permalink</a></h5>\n" .
-			"<input type=\"text\"  class=\"widetext\" name=\"" . $content->getPermalinkTextID() ."\" id=\"". $content->getPermalinkTextID() ."\" value=\"" . $content->getPermalink() ."\"/><br/>\n";
+	print	'<h5 class="texthead"><a href="mtext.php?action=edit&textid='.$mtext->getID().'&textcatid='.$mtext->getTextCategoryID().'">Permalink</a></h5>';
+	/* to automaticly create a permalink we use the title and urlencode it  */
+	print	'<input type="text"  class="wideinput" name="' . $content->getPermalinkTextID() .'" id="'. $content->getPermalinkTextID() .'" value="' . super_urlencode(strip_tags(MTextGet($content->getTitleTextID()))) .'"/><br/>';
+	
 	$mtext = MTextGetMTextByLanguage($content->getContentTextID(), TermosGetDefaultLanguage());
-	print	"<h5 class=\"texthead\"><a href=\"mtext.php?action=edit&textid=".$mtext->getID()."&textcatid=".$mtext->getTextCategoryID()."\">Text</a></h5>\n" .
-			"<textarea class=\"widetext\" name=\"". $content->getContentTextID() ."\" id=\"". $content->getContentTextID() ."\" />". $content->getContentText() ."</textarea><br/>\n" ;
+	print	'<h5 class="texthead"><a href="mtext.php?action=edit&textid='.$mtext->getID().'&textcatid='.$mtext->getTextCategoryID().'">Text</a></h5>' .
+			'<textarea class="widetext" name="'. $content->getContentTextID() .'" id="'. $content->getContentTextID() .'" />'. $content->getContentText() .'</textarea><br/>';
+	
 	$mtext = MTextGetMTextByLanguage($content->getTagsTextID(), TermosGetDefaultLanguage());
-	print	"<h5 class=\"texthead\"><a href=\"mtext.php?action=edit&textid=".$mtext->getID()."&textcatid=".$mtext->getTextCategoryID()."\">Tags</a></h5>\n";
-	print	"<textarea class=\"widetext\" name=\"". $content->getTagsTextID() ."\" id=\"". $content->getTagsTextID() ."\">" . $content->getTags() . "</textarea><br/>\n";
+	print	'<h5 class="texthead"><a href="mtext.php?action=edit&textid='.$mtext->getID().'&textcatid='.$mtext->getTextCategoryID().'">Tags</a></h5>';
+	print	'<textarea class="widetext" name="'. $content->getTagsTextID() .'" id="'. $content->getTagsTextID() .'">' . $content->getTags() . '</textarea><br/>';
 
 	$contenttext = ContentTextGetAllForContent($content->getID());
+	
 	$i = 1;
 	while($contenttext = ContentTextGetNext($contenttext)){
 		
 		$mtext = MTextGetMTextByLanguage($contenttext->getTextID(), TermosGetDefaultLanguage());
-		print	"<h5 class=\"texthead\"><a href=\"mtext.php?action=edit&textid=".$mtext->getID()."&textcatid=".$mtext->getTextCategoryID()."\">Text ".$i++."</a></h5>\n";
-		print	"<textarea name=\"". $contenttext->getTextID() ."\" id=\"". $contenttext->getTextID() . "\" class=\"widetext\">". $contenttext->getText() . "</textarea><br/>\n";	
+		print	'<h5 class="texthead"><a href="mtext.php?action=edit&textid='.$mtext->getID().'&textcatid='.$mtext->getTextCategoryID().'" target="_new">'.($content->getTemplateID() == 37?"Block":"Text").' '.$i.'</a></h5>';
+		print	'<textarea name="'. $contenttext->getTextID() .'" id="'. $contenttext->getTextID() . '" class="widetext">'. MTextGet($contenttext->getTextID()) . '</textarea><br/>';
+		$i++;	
 	}
 
-	print	"<span class=\"btnright\"> <input type=\"button\" id=\"templatedescription\" value=\"". MTextGet("templatedescription") ."\"/> <input type=\"button\" value=\"". MTextGet("saveToAllLanguages") ."\" onclick=\"saveToAllLanguages()\"/> <input type=\"submit\" value=\"". MTextGet("saveContentTexts") ."\"/></span>" .
+	print	'<span class="btnright">'.
+			'<input type="button" class="meta" id="templatedescription" value="'. MTextGet("templatedescription") .'"/>'. 
+			'<input type="button" class="meta" value="'. MTextGet("saveToAllLanguages") .'" onclick="saveToAllLanguages()"/>'. 
+			'<input type="submit" class="meta" value="'. MTextGet("saveContentTexts") .'"/>'.
+			'</span>' .
 			"</form>\n" ;
-	
+	/*		
 	print	"<div id=\"imagebox\">\n".
 			"<h5 class=\"texthead_u\">Images</h5>\n";
 
@@ -170,121 +190,149 @@ function editContent($cid, $nid){
 	//print	"<input type=\"button\" id=\"addImage\" value=\"".MTextGet("addImage")."\">\n";
 
 	print	"</div>\n";
+	
+	*/
 	print	"</div>\n";
 	print	"</div>\n";
-
 	
+	print 	'<div class="imagecolumn">'.
+			'<div class="contentright">';
 	
-	print	"<div class=\"columnbox\">\n" . 
-			"<form>\n" . 
-			"<input type=\"hidden\" name=\"action\" value=\"saveMetaInformation\"/>\n" .
-			"<input type=\"hidden\" name=\"cid\" value=\"".$content->getID()."\"/>\n" .
-			"<input type=\"hidden\" name=\"nid\" value=\"".$nid."\"/>\n" .
-			"<input type=\"hidden\" name=\"tmplid\" id=\"tmplid\"  value=\"".$content->getTemplateID()."\"/>\n" ;
+	print		'<h5 class="texthead_u">Images</h5>';
 
-	print	"<div id=\"content_extra\" class=\"contentright\">\n"; 
-	print	"<h5 class=\"texthead_u\">" . MTextGet("metaInformation") . "</h5>";
-	print	"<p class=\"dateline\">" . MTextGet("contentID") . ": <span class=\"boxright\">" . $content->getID() . "</span></p>";
-	print	"<p class=\"dateline\">" . MTextGet("currentNode") . ": <span class=\"boxright\">" . NodeGetName($nid) . "</span></p>";
+			$template = TemplateGetByID($content->getTemplateID());
+			
+			for($i=1;$i<$template->getImages()+1;$i++){
+			
+				print	'<div id="imgbox'.$i.'" class="contentimagebox">'. //
+						'	<div class="contentimagehead"><h5 class="texthead"># '.$i . '</h5></div>'.
+						'	<div id="image_'.$i.'" class="contentimage">';
+						ImageGetII_SMALL($cid, $i, "");
+				print	'	</div>';
+				print	'</div>';
+			}
+	
+	print 	'</div>'.
+			'</div>';
+
+	print	'<div class="metacolumn">' . 
+			'<form>' . 
+			'<input type="hidden" name="action" value="saveMetaInformation"/>'.
+			'<input type="hidden" name="cid" value="'.$content->getID().'"/>' .
+			'<input type="hidden" name="nid" value="'.$nid.'"/>'.
+			'<input type="hidden" name="tmplid" id="tmplid" value="'.$content->getTemplateID().'"/>';
+
+	print	'<div id="content_extra" class="contentright">'; 
+	print	'<h5 class="texthead_u">' . MTextGet("metaInformation") . '</h5>';
+	print	'<div class="dateline">' . MTextGet("contentID") . ': <span class="boxright">' . $content->getID() . '</span></div>';
+	print	'<div class="dateline">' . MTextGet("currentNode") . ': <span class="boxright">' . NodeGetName($nid) . '</span></div>';
 	
 	if($content->getTemplateID() == 9 || $content->getTemplateID() == 19)
-	print	"<p class=\"dateline\">" . MTextGet("externalid") . ": <span class=\"boxright\"><input type=\"text\" name=\"externalid\" id=\"externalid\" value=\"" . $content->getExternalID() . "\" size=\"15\"/></span></p>";
+	print	'<div class="dateline">' . MTextGet("externalid") . ': <span class="boxright"><input type="text" name="externalid" class="meta" id="externalid" value="' . $content->getExternalID() . '" size="24"/></span></div>';
 
-	print	"<p class=\"dateline\">" . MTextGet("templatename") . "<span class=\"boxright\"><select name=\"templateid\" id=\"templateid\">\n";
+	if($content->getTemplateID() == 9 || $content->getTemplateID() == 19){
+		
+		print	'<div class="dateline">' . MTextGet("price") . ':<span class="boxright"><input type="text" class="meta" name="price" id="price" value="' . $content->getValue() . '" size="5"/></span></div>';
+	}
+	
+	print	'<div class="dateline">' . ($content->getTemplateID()==9?MTextGet("soldout"):MTextGet("commentable")) . '<span class="boxright"><input type="checkbox" name="flag" id="flag" value="1" '.($content->getFlag()== 1 ? " checked" : "").'/></span></div>';
+
+	
+	print	'<div class="dateline">' . MTextGet("templatename") . ':<span class="boxright"><select name="templateid" class="meta" id="templateid">';
 	
 	$templates = TemplateGetAll();
 	while($templates = TemplateGetNext($templates)){
 		
 		if($templates->getID() == $content->getTemplateID())
-		print	"<option value=\"".$templates->getID()."\" selected>". TemplateGetName($templates->getID())."</option>";
+		print	'<option value="'.$templates->getID().'" selected>'. TemplateGetName($templates->getID()).'</option>';
 		else
-		print	"<option value=\"".$templates->getID()."\">". TemplateGetName($templates->getID())."</option>";
+		print	'<option value="'.$templates->getID().'">'. TemplateGetName($templates->getID()).'</option>';
 
 	}
-	print	"</select></span></p>\n";
-
-	if($content->getTemplateID() == 9 || $content->getTemplateID() == 19){
-		
-		print	"<p class=\"dateline\">" . MTextGet("price") . ": <span class=\"boxright\"><input type=\"text\" name=\"price\" id=\"price\" value=\"" . $content->getValue() . "\" size=\"5\"/></span></p>";
-	}
-
+	print	'</select></span></div>';
+	
 	if($content->getTemplateID() == 16){
-		print	"<p class=\"dateline\">" . MTextGet("ipnumber") . ": <span class=\"boxright\">". $content->getExternalID() ."</span></p>";
+		print	'<div class="dateline">' . MTextGet("ipnumber") . ': <span class="boxright">'. $content->getExternalID() .'</span></div>';
 	}
-	
-	/*if($content->getTemplateID() == 10 || $content->getTemplateID() == 11 || $content->getTemplateID() == 12 ){
-		print	"<p class=\"dateline\">" . MTextGet("subtype") . 
-				"<span class=\"boxright\"><select name=\"subtypeid\" id=\"subtypeid\">\n";
-		print	"<option value=\"0\">". MTextGet("selectSubtype")."</option>";
-		print	"<option value=\"imggallery\" ".($content->getValue()=="imggallery"?"SELECTED":"").">". MTextGet("hasImgGallery") . "</option>";
-		
-		print	"</select></span></p>\n";
-	}*/
-	
-	print	"<p class=\"dateline\">" . MTextGet("viewed") . ": <span class=\"boxright\">" . $content->getCounter() . "</span></p>\n";
 
+	print	'<div class="divider"></div>';
 			if($nid == $content->getDefaultNodeID()){
-				print	"<p class=\"boxline\">" . MTextGet("defaultNode") . ":<br/>";
-				print	"<select id=\"defaultnode\" name=\"defaultnode\"  style=\"width:215px\">\n";
+				print	'<div class="boxline">' . MTextGet("defaultNode") . ':<span class="boxright">';
+				print	'<select id="defaultnode" name="defaultnode" class="meta">';
 					PrintRootNodesOptions($content->getID(), $content->getDefaultNodeID() , 1);
-				print	"</select>\n";
-				print	"</p>";
+				print	'</select>';
+				print	'</span></div>';
 			}else{
-				print	"<p class=\"dateline\">" . MTextGet("defaultNode") .":";
-				print	"<input type=\"hidden\" name=\"defaultnode\" id=\"defaultnode\" value=\"".$content->getDefaultNodeID()."\"/>\n"; 
-				print	"<span class=\"boxright\">" . NodeGetName($content->getDefaultNodeID()) . "</span>\n";
-				print	"</p>";
+				print	'<div class="dateline">' . MTextGet("defaultNode") .':';
+				print	'<input type="hidden" name="defaultnode" id="defaultnode" value="'.$content->getDefaultNodeID().'"/>'; 
+				print	'<span class="boxright">' . NodeGetName($content->getDefaultNodeID()) . '</span>';
+				print	'</div>';
 			}
 	
+	print	'<div class="divider"></div>';
+	print	'<div class="dateline">' . MTextGet("createdDate") . ':<span class="boxright">' .
+			'<input type="text" class="dateinput" name="createddate" id="createddate" value="'.date('Y-m-d', strtotime($content->getCreatedDate())).'"/>' . 
+			'<input type="text" class="timeinput" name="createdtime" id="createdtime" value="'.date('H:i:s', strtotime($content->getCreatedDate())).'"/>' . 
+			'</span></div>';
 	
-	print	"<p class=\"dateline\">" . MTextGet("createdDate") . ": <span class=\"boxright\">" .
-			"<input type=\"text\" class=\"dateinput\" name=\"createddate\" id=\"createddate\" value=\"".date('Y-m-d', strtotime($content->getCreatedDate()))."\"/>" . 
-			"<input type=\"text\" class=\"timeinput\" name=\"createdtime\" id=\"createdtime\" value=\"".date('H:i:s', strtotime($content->getCreatedDate()))."\"/>" . 
-			"</span></p>\n";
-	
-	print	"<p class=\"dateline\">" . MTextGet("archiveDate") . ": <span class=\"boxright\">" .
-			"<input type=\"text\" class=\"dateinput\" name=\"archivedate\" id=\"archivedate\" value=\"".date('Y-m-d', strtotime($content->getArchiveDate()))."\"/>" .
-			"<input type=\"text\" class=\"timeinput\" name=\"archivetime\" id=\"archivetime\" value=\"".date('H:i:s', strtotime($content->getArchiveDate()))."\"/>" .
-			"</span></p>\n";
+	print	'<div class="dateline">'. MTextGet("archiveDate") . ':<span class="boxright">' .
+			'<input type="text" class="dateinput" name="archivedate" id="archivedate" value="'.date('Y-m-d', strtotime($content->getArchiveDate())).'"/>' .
+			'<input type="text" class="timeinput" name="archivetime" id="archivetime" value="'.date('H:i:s', strtotime($content->getArchiveDate())).'"/>' .
+			'</span></div>';
 
-	print	"<p class=\"dateline\">" . MTextGet("startDate") . ":  <span class=\"boxright\">" . 
-			"<input type=\"text\" class=\"dateinput\" name=\"startdate\" id=\"startdate\" value=\"".date('Y-m-d', strtotime($content->getStartDate()))."\"/>" .
-			"<input type=\"text\" class=\"timeinput\" name=\"starttime\" id=\"starttime\" value=\"".date('H:i:s', strtotime($content->getStartDate()))."\"/>" .
-			"</span></p>\n";
+	print	'<div class="dateline">'. MTextGet("startDate")  . ':<span class="boxright">' .
+			'<input type="text" class="dateinput" name="startdate" id="startdate" value="'.date('Y-m-d', strtotime($content->getStartDate())).'"/>' .
+			'<input type="text" class="timeinput" name="starttime" id="starttime" value="'.date('H:i:s', strtotime($content->getStartDate())).'"/>' .
+			'</span></div>';
 	
-	print	"<p class=\"dateline\">" . MTextGet("endDate") . ":  <span class=\"boxright\">" .
-			"<input type=\"text\" class=\"dateinput\" name=\"enddate\" id=\"enddate\" value=\"".date('Y-m-d', strtotime($content->getEndDate()))."\"/>" .
-			"<input type=\"text\" class=\"timeinput\" name=\"endtime\" id=\"endtime\" value=\"".date('H:i:s', strtotime($content->getEndDate()))."\"/>" .
-			"</span></p>\n";
-
-
+	print	'<div class="dateline">'. MTextGet("endDate") . ':</span><span class="boxright">' .
+			'<input type="text" class="dateinput" name="enddate" id="enddate" value="'.date('Y-m-d', strtotime($content->getEndDate())).'"/>' .
+			'<input type="text" class="timeinput" name="endtime" id="endtime" value="'.date('H:i:s', strtotime($content->getEndDate())).'"/>' .
+			'</span></div>';
 	
-	print	"<p class=\"dateline\">". MTextGet("positionInNode") . ":<span class=\"boxright\">";
+	print	'<div class="divider"></div>';
+	
+	print	'<div class="dateline">'. MTextGet("positionInNode") . ':<span class="boxright">';
 	
 	$position_in_node = ContentHasNode($cid, $nid);
 	
-	print	"<select name=\"position\">";
+	print	'<select class="metashort" name="position">';
 			for($i=0; $i<50; $i++)
-			print	"<option value=\"". $i ."\"" . ( $position_in_node == $i ? " selected" : " ") . ">". $i ."</option>\n";
-	print	"</select>";
+			print	'<option value="'. $i .'"' . ( $position_in_node == $i ? " selected" : " ") . '>'. $i .'</option>';
+	print	'</select>';
 	
-	print	"</span></p>";
+	print	'</span></div>';
+	
+	
 
-	print	"<p class=\"dateline\">" . ($content->getTemplateID()==9?MTextGet("soldout"):MTextGet("commentable")) . "<span class=\"boxright\"><input type=\"checkbox\" name=\"flag\" id=\"flag\" value=\"1\" ".($content->getFlag()== 1 ? " checked" : "")."/></span></p>";
 	
-	print	"<p class=\"boxline\">" . MTextGet("attachedToNode") . ":<br/>";
-	print	"<select id=\"nodebox\" name=\"nodes[]\" multiple size=\"12\" style=\"width:215px\">\n";
+	print	MTextGet("attachedToNode") . ':<br/>';
+	print	'<select id="nodebox" name="nodes[]" multiple size="12" class="metanodebox">'; //class="metanodebox"
 			PrintRootNodesOptions($content->getID(), $content->getDefaultNodeID(),  2);
-	print	"</select></p>\n";
-	print	"<p class=\"dateline\">" . MTextGet("latestSaveBy") . ":<span class=\"boxright\">" . UserGetName($content->getAuthorID()) . "</span></p>\n";
+	print	'</select>';
+	
+	//</div>';
+	
+	print	'<div class="divider"></div>';
+	
+	
+	print	'<div class="dateline">' . MTextGet("latestSaveBy") . ':<span class="boxright">' . UserGetName($content->getAuthorID()) . '</span></div>';
 
-	print	"<p class=\"dateline\"><span class=\"btnright\"><input type=\"submit\" value=\"". MTextGet("saveContentMeta") . "\"></span></p>";
-	print	"</div>\n";
-	print	"</form>\n"; 
-	print	"<div id=\"content_forms\" class=\"contentright\">";
-	print	"<h5 id=\"openforms\" class=\"texthead_u_link\">" . MTextGet("showforms") . " &#187;</h5>";
-	print	"</div>"; 
-	print	"</div>\n";
+	print	'<div class="dateline"><span class="btnright"><input type="submit" value="'. MTextGet("saveContentMeta") . '"></span></div>';
+	
+	
+	
+	print	'</div>';
+	
+
+	
+	print	'</form>'; 
+	print	'<div id="content_forms" class="contentright">';
+	print	'<h5 id="openforms" class="texthead_u_link">' . MTextGet("showforms") . ' &#187;</h5>';
+	print	'</div>'; 
+	
+	print	'</div>';
+	
 
 }
 
@@ -502,16 +550,16 @@ function deleteContent($cid){
 
 
 function htmlStart(){
-
+/*
     print	"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" .
 			"<html>\n" .
 			"<head>\n" .
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n" .
 			"<title>Termos Content</title>\n" .
 			"<link rel=\"stylesheet\" href=\"css/termosadmin.css\"/>\n" .
-			"<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n" .
-			"<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\"></script>\n" .
-			"<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js\"></script>\n" .
+			"<link rel=\"stylesheet\" href=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n" .
+			"<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\"></script>\n" .
+			"<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js\"></script>\n" .
 			"<script type=\"text/javascript\" src=\"/trms-admin/js/content_admin.js\"></script>\n" .
 			"<script type=\"text/javascript\" src=\"/trms-admin/js/jquery.form.js\"></script>\n" .
 			"<script>\n" .
@@ -531,6 +579,59 @@ function htmlStart(){
 			"</script>\n" .
 			"</head>\n" .
 			"<body>\n";
+		*/
+		
+	 print	'<!DOCTYPE html>' .
+			'<html>' .
+			'<head>' .
+			'<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>' .
+			'<title>Edit Content</title>' .
+			'<link rel="stylesheet" href="css/termosadmin.css"/>' .
+			
+			'<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css" type="text/css" media="all" />' .
+			'<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>' .
+			'<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script>' .
+			
+			/*'<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>' .
+			'<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">'.
+			'<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>'.*/
+			
+			'<script type="text/javascript" src="/trms-admin/js/content_admin.js"></script>' .
+			'<script type="text/javascript" src="/trms-admin/js/jquery.form.js"></script>' .
+			
+			'<script>' .
+			'function deleteContent(cid){' .
+			'	if(confirm("' . MTextGet("reallyDeleteContent") . '?"))' .
+			'	location.href = "content.php?action=deleteContent&cid=" + cid;' .
+			'}' .
+			'function saveToAllLanguages(){' .
+			'	if(confirm("' . MTextGet("saveToAllLanguages") . '?")){' .
+			'	document.getElementById("action").value = "saveTextContentToAllLanguages"; ' .
+			'	document.getElementById("contentTexts").submit(); ' .
+			'	}else{' .
+			'	document.getElementById("action").value = "saveTextContent";' .
+			'	}' .
+			'}' .
+			'function createContentText(){' .
+			'	if(confirm("' . MTextGet("addContentText") . '?")){' .
+			'	document.getElementById("action").value = "createContentText"; ' .
+			'	document.getElementById("contentTexts").submit();' .
+			'	}else{' .
+			'	document.getElementById("action").value = "editContent";' .
+			'	}' .
+			'}' .
+			'function deleteContentText(cid, pos){' .
+			'	if(confirm("' . MTextGet("deleteContentText") . '?" + cid + " " + pos)){' .
+			'	document.getElementById("action").value = "deleteContentText"; ' .
+			'	document.getElementById("pos").value = pos;' .
+			'	document.getElementById("contentTexts").submit();' .
+			'	}else{' .
+			'	document.getElementById("action").value = "editContent";' .
+			'	}' .
+			'}' .
+			'</script>' .
+			'</head>' .
+			'<body>';
 }
 
 function htmlEnd(){

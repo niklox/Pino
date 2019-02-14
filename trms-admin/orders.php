@@ -83,9 +83,9 @@ function htmlStart(){
 			"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>\n" .
 			"<title>Termos Orders</title>\n" .
 			"<link rel=\"stylesheet\" href=\"css/termosadmin.css\"/>\n" .
-			"<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n" .
-			"<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\"></script>\n" .
-			"<script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js\"></script>\n" .
+			"<link rel=\"stylesheet\" href=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n" .
+			"<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js\"></script>\n" .
+			"<script type=\"text/javascript\" src=\"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js\"></script>\n" .
 			"<script type=\"text/javascript\" src=\"/trms-admin/js/order_admin.js\"></script>\n" .
 			"</head>\n" .
 			"<body>\n";

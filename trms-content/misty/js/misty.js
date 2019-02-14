@@ -50,7 +50,8 @@ $(function(){
 	/**
 	 * For the ordered quantity at the orderpage
 	 */
-	$("input[id^='orderrow_']").live("change", function(event) {
+	//$("input[id^='orderrow_']").live("change", function(event) {
+	$(document).on("change", "input[id^='orderrow_']", function(event) {
 		orderrow = event.target.id.substring(event.target.id.indexOf("_")+1 );
 		quant = event.target.value;
 		$("#orderrows").load('/trms-content/ajax/order_edit.php',{action: 'setquantity', orderitemid: orderrow, quantity: quant});
@@ -59,8 +60,8 @@ $(function(){
 	/**
 	 * set orderdiscount
 	 */
-	$("#discountbutton").live("click", function(event) {
-		
+	//$("#discountbutton").live("click", function(event) {
+	$(document).on("click", "#discountbutton", function(event) {
 		var code  = $("#discountcode").val();
 		$("#orderrows").load('/trms-content/ajax/order_edit.php',{action: 'addiscount', discountcode: code});
 		
@@ -140,7 +141,8 @@ $(function(){
 	/**
 	 * Menububble
 	 */
-	$(".focusnav>ul>li").live("mouseover", function(){
+	// $(".focusnav>ul>li").live("mouseover", function(){
+	$(document).on("mouseover", ".focusnav>ul>li", function(){
 		
 		var focus = "#focus_" + $(this).html();
 		$(".focusnav>ul").css("color", "#11C0F3");
@@ -150,7 +152,8 @@ $(function(){
 		$(this).css("color", "#E42D24")
 	});
 	
-	$(".focusnav>ul>li").live("mouseout", function(){
+	//$(".focusnav>ul>li").live("mouseout", function(){
+	$(document).on("mouseout", ".focusnav>ul>li", function(){
 		$(this).css("color", "#11C0F3");
 	});
 
@@ -244,23 +247,17 @@ $(function(){
 		}
 	});
 
-	$("#login_btn").live("click", function(){
-		var values = $("#logon").serialize();
-
-		//alert(values);
-		
-		$("#confirmation_std").load('/trms-content/ajax/logincheck.php?', values);
-		return false;
-	})
-
-	$("#logout_btn").live("click", function(){
+	
+	//$("#logout_btn").live("click", function(){
+	$(document).on("click", "#logout_btn", function(){
 		var values = $("#logon").serialize();
 		
 		$("#confirmation_std").load('/trms-content/ajax/logincheck.php?', values);
 		return false;
 	})
 
-	$("#closelogin").live('click', function(){
+	//$("#closelogin").live('click', function(){
+	$(document).on('click', "#closelogin", function(){
 		$("#confirmation_std").hide('slow', function(){
 			$(this).html("");
 		});

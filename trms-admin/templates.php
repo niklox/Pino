@@ -112,7 +112,7 @@ function editTemplate($tmplid){
 	
 	if($template->getStatus() == 0){
 		print	"Textblocks <select name=\"templatetexts\">";
-		for($i=0; $i<16; $i++)
+		for($i=0; $i<21; $i++)
 			print	"<option value=\"".$i."\"". ($i == $template->getTexts()?"selected":"") . ">".$i."</option>\n";
 		print	"</select>\n";
 

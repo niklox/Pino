@@ -597,7 +597,7 @@ mysql> desc PageContentTypes;
 
 */
 
-define("TEMPLATE_SELECT", "SELECT PageContentTypes.PageContentTypeID, PageContentTypes.PageContentTypeNameTextID, PageContentTypes.PageContentTypeDescTextID, PageContentTypes.PageContentTypeTexts, PageContentTypes.PageContentTypeImages, PageContentTypes.PageContentTypeImageHandle, PageContentTypes.PageContentTypeStatus FROM PageContentTypes ");
+define("TEMPLATE_SELECT", "SELECT PageContentTypes.PageContentTypeID, PageContentTypes.PageContentTypeNameTextID, PageContentTypes.PageContentTypeDescTextID, PageContentTypes.PageContentTypeTexts, PageContentTypes.PageContentTypeImages, PageContentTypes.PageContentTypeImageHandle, PageContentTypes.PageContentTypeStatus FROM PageContentTypes");
 
 define("TEMPLATE_INSERT", "INSERT INTO PageContentTypes (PageContentTypeID, PageContentTypeNameTextID, PageContentTypeDescTextID, PageContentTypeTexts, PageContentTypeImages, PageContentTypeImageHandle, PageContentTypeStatus)");
 
@@ -649,7 +649,7 @@ function TemplateGetAll(){
 	global $dbcnx;
 	
 	$instance = new Template;
-	$sqlstr = TEMPLATE_SELECT;
+	$sqlstr = TEMPLATE_SELECT . ' ORDER BY PageContentTypeID';
 	
 	$row = @mysqli_query($dbcnx, $sqlstr);
 	$instance->setDBrows($row);

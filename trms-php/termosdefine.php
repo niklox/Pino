@@ -15,6 +15,7 @@ define("MAILHOST", "mail.glesys.se");
 define("MAILPORT", "587");
 define("MAILUSER", "niklas@entertainment.se");
 define("MAILPSWD", "kNaT1960");
+define("PRODUCTS", "72");
 
 // Do not edit this
 define("LEGAL_SALT", "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
@@ -22,7 +23,7 @@ define("IMGMASK","389");
 define("IMAGEDIR", "/images/");
 define("UPLOADDIR", "/uploads/");
 define("DOCUMENTDIR", "/downloads/");
-define("IMAGE_MAX_FILESIZE", "9000000");
+define("IMAGE_MAX_FILESIZE", "100000000");
 define("MAXLEVELS", "10");
 define("CONTENT_ADMIN", "/trms-admin/content.php");
 define("TEMPLATE_IMAGECATEGORY", "5");

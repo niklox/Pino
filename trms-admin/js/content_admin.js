@@ -119,11 +119,84 @@ $(function(){
 	});
 
 	$("#formid").live("change", function(){
+	
 		$("#content_forms").load('/trms-admin/ajax/content_forms.php', {action: "addform", cid: $("#cid").val(), formid: $(this).val()} );
-	})
-})
+	});
+});
 
 function setSelectedTemplate(id, name){
 	document.getElementById('tmplid').value = id;
 	document.getElementById('selectedtemplate').innerHTML = name;
 }
+
+/*
+ *	DRAG and DROP functions to move order of the products in admin
+ */
+
+function dragstart_handler(ev) {
+ 	// Add the target element's id to the data transfer object
+ 	ev.dataTransfer.setData("text/plain", ev.target.id);
+}
+
+function drop_handler(ev) {
+ 	ev.preventDefault();
+ 	
+ 	// Get the parent container of all products
+ 	var parent = document.getElementById(ev.target.id).parentNode;
+ 	var child_nodes = parent.childNodes;
+ 	var targ = document.getElementById(ev.target.id);
+ 
+ 	// Get the id of the object we just dropped and add it to the DOM
+ 	var data = ev.dataTransfer.getData("text/plain");
+ 	var src = document.getElementById(data);
+ 	parent.insertBefore(src, targ);
+ 	
+ 	// Loop through the child_nodes to set all new positions after the drop
+ 	// Create an array of JSON objects containing productid (cid), nodeid (pid) and the 
+ 	// new position Send the JSON via post to the server for update in db.
+ 
+ 	var termosnode = 72;
+ 	var jsonstr = '[';
+ 	var posbox = "";
+ 	for (i = 0; i < child_nodes.length; i++) {
+ 		jsonstr += '{"cid":"'+child_nodes[i].id.substring(8,child_nodes[i].id.length)+'",';
+ 		
+ 		// Get the productpos container, set the new position, add it to the jsonobject 
+		posbox = child_nodes[i].children;
+ 		for(j=0;j<posbox.length;j++){
+ 			if(posbox[j].className == "productpos"){
+ 			posbox[j].innerHTML = i + 1;
+ 			jsonstr += '"position":"'+ (i + 1) +'",';
+ 			}
+ 		}
+ 		jsonstr += '"pid":"'+termosnode+'"}';
+ 		if(i < child_nodes.length-1) jsonstr += ',';
+ 	}
+ 	jsonstr += ']';
+ 	
+ 	//console.log(jsonstr);
+ 	sendData(jsonstr);
+}
+
+function dragover_handler(ev) {
+ 	ev.preventDefault();
+ 	// Set the dropEffect to move
+ 	ev.dataTransfer.dropEffect = "move"
+}
+
+function sendData(data) {
+  var XHR = new XMLHttpRequest();
+  
+  // Define what happens in case of error
+  XHR.addEventListener('error', function(event) {
+    alert('Oops! Something went wrong.');
+  });
+
+  // Set up our request
+  XHR.open('POST', '/trms-admin/ajax/content_positions.php', true);
+
+  // Send our FormData as a JSON object; HTTP headers are set automatically
+  XHR.send(data);
+}
+
+

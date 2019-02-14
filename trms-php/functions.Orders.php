@@ -37,7 +37,7 @@ mysql> desc Orders;
 | OrderShippingMethod   | varchar(255) | YES  |     |         |       |
 | OrderExtraComments    | text         | YES  |     | NULL    |       |
 | OrderType             | int(11)      | YES  |     | 0       |       |
-| OrderResellerID       | int(11)      | YES  |     | NULL    |       |
+| OrderResellerID       | int(11)      | YES  |     | NULL    |       | // reseller id is used as order flag
 | OrderCustomerComments | varchar(255) | YES  |     |         |       |
 | OrderDiscount         | decimal(6,4) | YES  |     | 0.0000  |       |
 | OrderCreatedDate      | datetime     | YES  |     | NULL    |       |
@@ -300,7 +300,18 @@ function OrderSearch($startdate, $enddate, $orderstatus){
 	return $instance;
 }
 
+// Data column OrderResellerID is used as OrderFlag bitwise 
+function OrderSetFlag($orderid, $flagid){
+	global $dbcnx;
+	$sql = 'UPDATE Orders SET OrderResellerID  = OrderResellerID  + '.$flagid.' WHERE OrderResellerID  & '.$flagid.' = 0 AND OrderID =' . $orderid;
+	mysqli_query($dbcnx, $sql);
+}
 
+function OrderRemoveFlag($orderid, $flagid){
+	global $dbcnx;
+	$sql = 'UPDATE Orders SET OrderResellerID = OrderResellerID &~ '.$flagid.' WHERE OrderID =' . $orderid;
+	mysqli_query($dbcnx, $sql);
+}
 
 /*
 
@@ -395,6 +406,8 @@ function OrderItemGetByID($orderitemid){
 
 function OrderItemGetAllForOrder($oid){
 	global $dbcnx;
+	
+	
 	
 	$instance = new OrderItem;
 	$sqlstr = ORDERITEM_SELECT . " WHERE OrderItemOrderID = " . $oid;

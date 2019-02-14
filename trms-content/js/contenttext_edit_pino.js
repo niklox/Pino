@@ -2,7 +2,7 @@ $(function() {
 		
 		//bind to the form's submit event 
 		$('#textedit').click(function() { 
-			$.post("/trms-content/ajax/contenttext_edit.php", $("#editcontenttext").serialize());
+			$.post("/trms-content/ajax/contenttext_edit_pino.php", $("#editcontenttext").serialize());
 			$('#' + $('#textid').val()).html($('#textcontent').val());
 		});
 		

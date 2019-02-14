@@ -24,6 +24,7 @@ if(isset($_REQUEST["orderdetail"]))$orderdetail = $_REQUEST["orderdetail"];
 if(isset($_REQUEST["orderdetailvalue"]))$orderdetailvalue= $_REQUEST["orderdetailvalue"];
 if(isset($_REQUEST["discountcode"]))$discountcode= $_REQUEST["discountcode"];
 if(isset($_REQUEST["shippingaddress"]))$shippingaddress= $_REQUEST["shippingaddress"];
+if(isset($_REQUEST["organisationaddress"]))$organisationaddress= $_REQUEST["organisationaddress"];
 
 if($action == "additem")
 	addItem( $prid );
@@ -39,6 +40,8 @@ else if($action == "setorderdetail")
 	 setOrderDetail($oid, $orderdetail, $orderdetailvalue);
 else if($action == "setshipaddress")
 	setShippingAddressFlag($oid, $shippingaddress);
+else if($action == "setorganisationaddress")
+	setOrganisationAddressFlag($oid, $organisationaddress);
 else if($action == "addiscount")
 	addDiscount( $discountcode );
 else if($action == "deleteorder")
@@ -54,9 +57,9 @@ function confirmOrder( $oid, $cid ){
 
 	$content = ContentGetByID($cid);
 	$ctext = ContentTextGet($content->getID(), 3);
-	print	"<div id=\"orderinfo\">\n";
+	print	'<div id="ordergenericinfo">';
 	print	MTextGet($ctext->getTextID());
-	print	"</div>\n";
+	print	'</div>';
 
 }
 
@@ -64,36 +67,36 @@ function missingDetails( $oid, $cid ){
 
 	$content = ContentGetByID($cid);
 	$ctext = ContentTextGet($content->getID(), 4);
-	print	"<div id=\"orderinfo\">popopo\n";
+	print	'<div id="ordergenericinfo">';
 	print	MTextGet($ctext->getTextID());
-	print	"</div>\n";
+	print	'</div>';
 
 }
 
 function updateOrderRows(){
-
+	
 	if($order = OrderGetByID( getOrderID() ) ){
 
-		print	"<table class=\"ordertable\">" .
-			"<tr class=\"underlined\"><td class=\"head1\">Beskrivning</td><td class=\"head2\">Antal</td><td class=\"head3\">Pris</td><td class=\"head4\">Summa</td></tr>\n" ;
+			print '<table class="ordertable">' .
+			  	  '<tr class="underlined"><td class="head1">Beskrivning</td><td class="head2">Antal</td><td class="head3">Pris</td><td class="head4">Summa</td></tr>' ;
 			$orderitem = OrderItemGetAllForOrder($order->getID());
-
+			$tab = 0;
 			while($orderitem = OrderItemGetNext($orderitem)){
-
+				$tab++;
 				$product = ContentGetByID($orderitem->getProductID());
-
-				print "<tr><td>" .$product->getTitle() . "</td><td><input type=\"text\" class=\"quantity\" id=\"orderrow_".$orderitem->getID()."\" value=\"" . round($orderitem->getQuantity()) . "\"/></td><td>" . number_format($orderitem->getPrice(), 2, ',', ' ') . "</td><td class=\"right\">" . number_format($orderitem->getQuantity() * $orderitem->getPrice(), 2, ',', ' ') ."</td></tr>\n";
-				$ordertotal += $orderitem->getQuantity() * $orderitem->getPrice();
-
+				print '<tr>'.
+					  '<td>' .$product->getTitle() . '</td>'.
+					  '<td><div class="pcs">'.
+					  '<input type="text" class="quantity" id="orderrow_'.$orderitem->getID().'" value="' . round($orderitem->getQuantity()) . '" tabindex="'.$tab.'"/>'.
+					  '<div class="add" id="add_'.$orderitem->getID().'">+</div>'.
+					  '<dic class="sub" id="sub_'.$orderitem->getID().'">-</div>'.
+					  '</div></td>'.
+					  '<td>' . number_format($orderitem->getPrice(), 2, ",", " ") . '</td>'.
+					  '<td class="right">' . number_format($orderitem->getQuantity() * $orderitem->getPrice(), 2, ",", " ") .'</td>'.
+					  '</tr>';
+					$ordertotal += $orderitem->getQuantity() * $orderitem->getPrice();
 			}
-		if($order->getDiscount() > 0){
-
-			$discount = round($ordertotal * 0.2);
-			$ordertotal = round($ordertotal * 0.8);
-			print '<tr id="discountrow"><td>Kampanjrabatt</td><td>20%</td><td> -'.number_format($discount,2,",", " " ) .'</td><td class="right">'.number_format($ordertotal,2,","," ").'</td></tr>';
-
-		}
-
+			
 			if($ordertotal < 301)
 				$freightcost = 36;
 			else if($ordertotal < 1001)
@@ -101,9 +104,9 @@ function updateOrderRows(){
 			else if ($ordertotal < 1 || $ordertotal > 1000)
 				$freightcost = 0;
 			// Moms ingår med: ". number_format(($ordertotal + $freightcost) * 0.2, 2,  ',', ' ')."
-			print	"<tr><td rowspan=\"2\" class=\"transp_small\">* Obligatoriska fält<br/>** Du kan ändra i antalsrutan på orderraden. Skriver du 0 tas varan bort</td><td  class=\"transp\"></td><td>Frakt</td><td class=\"right\">".number_format($freightcost, 2, ',',' ')."</td></tr>";
+			print	"<tr><td rowspan=\"2\" colspan=\"2\" class=\"transp_small\"></td><td>Frakt</td><td class=\"right\">".number_format($freightcost, 2, ',',' ')."</td></tr>";
 			if($ordertotal > 0)
-			print	"<tr><td class=\"transp\"></td><td>Summa:</td><td class=\"right\">" . number_format($ordertotal + $freightcost, 2, ',', ' ') . "</td></tr>";
+			print	"<tr><td>Summa:</td><td class=\"right\">" . number_format($ordertotal + $freightcost, 2, ',', ' ') . "</td></tr>";
 			print	"</table>";
 
 			OrderCalculateTotal( $order->getID() );
@@ -117,7 +120,7 @@ function updateOrderDetails(){
 function createOrder(){
 	$order = new Order;
 	$order->setCreatedDate(date("Y-m-d H:i:s"));
-	$order->setResellerID(1);
+	$order->setResellerID(0);
 	$_SESSION["orderid"] = OrderSave($order);
 	return $order->getID();
 }
@@ -215,11 +218,46 @@ function setOrderDetail($oid, $orderdetail, $orderdetailvalue){
 
 function setShippingAddressFlag($oid, $shippingaddress){
 
-	$order = OrderGetByID($oid);
-	if($shippingaddress == "true")
-		$order->setResellerID(1);
-	else{
-		$order->setResellerID(0);
+	if($shippingaddress == "true"){
+		OrderSetFlag($oid, 1);
+		$order = OrderGetByID($oid);
+		
+		print	'<h4>Leveransadress</h4>';
+		print   '<div id="deliverycompanyname">';
+		if( $order->getResellerID() & 2 ) // If delivered to an organisation
+		print	'<input type="text" class="orderdetails" id="ordershipcompanyname" value="' . $order->getShipCompanyName().'" placeholder="Förskola/Organisation/Företag">';
+		print 	'</div>';
+		print 	'<input type="text" class="orderdetails" id="ordershipfullname" value="' . $order->getShipLastName().'" placeholder="Mottagarens För och efternamn *"/>'.
+				'<input type="text" class="orderdetails" id="ordershipaddress" value="' . $order->getShipAddress1().'" placeholder="Adress"/>'.
+				'<input type="text" class="orderdetails" id="ordershipzip" value="' . $order->getShipZip().'" placeholder="Postnummer"/>'.
+				'<input type="text" class="orderdetails" id="ordershipcity" value="' . $order->getShipCity().'" placeholder="Ort"/>'.
+				'<textarea class="orderdetails" id="orderrecievermessage" placeholder="Ev. meddelande eller hälsning till mottagaren">' . $order->getComments() . '</textarea>';
+	}else{
+		
+		OrderRemoveFlag($oid, 1);
+		$order = OrderGetByID($oid);
+		$order->setShipLastName("");
+		$order->setShipCompanyName("");
+		$order->setShipAddress1("");
+		$order->setShipZip("");
+		$order->setShipCity("");
+	}
+	OrderSave($order);
+}
+
+function setOrganisationAddressFlag($oid, $organisationaddress){
+
+	if($organisationaddress == "true"){
+		OrderSetFlag($oid, 2);
+		$order = OrderGetByID($oid);
+		
+		print	'<input type="text" class="orderdetails" id="ordercompanyname" value="' . $order->getCompanyName() . '" tabindex="" placeholder="Förskola/Organisation/Företag *"/>'.
+				'<input type="text" class="orderdetails" id="orderreference" value="' . $order->getCustomerRef() .'" tabindex="" placeholder="Ev. referensnr, rekvisition etc."/>';
+	
+	}else{
+		print 'asdsd';
+		OrderRemoveFlag($oid, 2);
+		$order = OrderGetByID($oid);
 		$order->setShipLastName("");
 		$order->setShipCompanyName("");
 		$order->setShipAddress1("");
@@ -283,12 +321,12 @@ function sendOrder($oid,$cid){
 							"	<td class=\"value\">" . $order->getAddress1()."</td>" .
 							"</tr>\n";
 
-		$contentplain .=	"Order www.pino.se ID:" .  $order->getID() . "\n" .
-							"=================================================\n";
+		$contentplain .=	"Order www.pino.se ID:" .  $order->getID() . "\r\n" .
+							"=================================================\r\n";
 		$contentplain .=	"FAKTURA";
-							if( $order->getResellerID() == 0 )
+							if( $order->getResellerID() & 1 == 0 )
 		$contentplain .=	" & LEVERANS";
-		$contentplain .=	"ADRESS\n";
+		$contentplain .=	"ADRESS\r\n";
 
 
 		$ordercontent .=	"<tr> ".
@@ -309,18 +347,18 @@ function sendOrder($oid,$cid){
 							"	<td class=\"label\">Meddelande:</td><td colspan=\"3\" class=\"value\">" . $order->getCustomerComments() . "</td>".
 							"</tr>\n";
 
-		$contentplain .=	"Namn:\t\t\t" . $order->getLastName() . "\n".
-							"Företag/skola:\t\t" .  $order->getCompanyName() . "\n".
-							"Adress:\t\t\t" . $order->getAddress1() . "\n".
-							"Postnr:\t\t\t" . $order->getZip() . "\n".
-							"Ort:\t\t\t" . $order->getCity() . "\n".
-							"E-post:\t\t\t" . $order->getContactEmail() . "\n".
-							"Telefon:\t\t" . $order->getAddress2() . "\n".
-							"Referens:\t\t" . $order->getCustomerRef() . "\n".
-							"Meddelande:\t\t\n" . $order->getCustomerComments() . "\n".
-							"=================================================\n";
+		$contentplain .=	"Namn:\t\t\t" . $order->getLastName() . "\r\n".
+							"Företag/skola:\t\t" .  $order->getCompanyName() . "\r\n".
+							"Adress:\t\t\t" . $order->getAddress1() . "\r\n".
+							"Postnr:\t\t\t" . $order->getZip() . "\r\n".
+							"Ort:\t\t\t" . $order->getCity() . "\r\n".
+							"E-post:\t\t\t" . $order->getContactEmail() . "\r\n".
+							"Telefon:\t\t" . $order->getAddress2() . "\r\n".
+							"Referens:\t\t" . $order->getCustomerRef() . "\r\n".
+							"Meddelande:\t\t\n" . $order->getCustomerComments() . "\r\n".
+							"=================================================\r\n";
 
-		if( $order->getResellerID() == 1 ){
+		if( $order->getResellerID() & 1 ){
 
 		$ordercontent .=	"<tr><td class=\"left\" rowspan=\"6\">&nbsp;</td><td class=\"label\" colspan=\"4\"><h4>" . MTextGet("deliveryaddress") . "</h4></td></tr>" .
 							"<tr>".
@@ -406,13 +444,13 @@ function sendOrder($oid,$cid){
 							"</div>\n";
 		///////////////////////////
 
-		$headers = "From: shop@pino.se\r\n";
-		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+		//$headers = "From: shop@pino.se\r\n";
+		//$headers .= "MIME-Version: 1.0\r\n";
+		//$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-		$headersplain .= "From: Pino webshop <".$order->getContactEmail().">\r\n";
-		$headersplain .= "MIME-Version: 1.0\r\n";
-		$headersplain .= "Content-Type: text/plain; charset=UTF-8\r\n";
+		//$headersplain .= "From: Pino webshop <".$order->getContactEmail().">\r\n";
+		//$headersplain .= "MIME-Version: 1.0\r\n";
+		//$headersplain .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
 		$subject = "Pinoorder: " . $order->getID();
 
@@ -435,7 +473,7 @@ function sendOrder($oid,$cid){
 		$mail->Port = MAILPORT;
 		$mail->Username = MAILUSER;
 		$mail->Password = MAILPSWD;
-		$mail->SetFrom('info@entertainment.se', 'Pinolek');
+		$mail->SetFrom('info@pinothebear.se', 'Pinothebear Shop');
 		$mail->Subject = $subject;
 		$address = $order->getContactEmail();
 		$name = "";
@@ -445,6 +483,8 @@ function sendOrder($oid,$cid){
 		
 		/// Confirmation mail to Pinolek
 		$mail = new PHPMailer();
+		$mail->ContentType = 'text/plain'; 
+    	$mail->IsHTML(false);
 		$mail->CharSet = 'UTF-8';
 		$mail->IsSMTP();
 		$mail->SMTPAuth = true;
@@ -452,15 +492,17 @@ function sendOrder($oid,$cid){
 		$mail->Port = MAILPORT;
 		$mail->Username = MAILUSER;
 		$mail->Password = MAILPSWD;
-		$mail->SetFrom('info@entertainment.se', 'Pinolek');
+		$mail->SetFrom('info@pinothebear.se', 'Pinothebear Shop');
 		$mail->Subject = $subject;
+		$address = 'pinolek@telia.com';
+		$name = "";
+		$mail->AddAddress($address, $name);
 		$address = 'niklas@entertainment.se';
 		$name = "";
-		$mail->MsgHTML($mailcontent);
 		$mail->AddAddress($address, $name);
+		$mail->Body = $mailcontent;  
 		$mail->Send();
 		
-
 		$order->setStatus(1);
 		$order->setPaymentMethod(0);
 		OrderSave($order);
@@ -490,10 +532,6 @@ function sendOrder($oid,$cid){
 		print $fel . '<br/>';
 		missingDetails($oid,$cid);
 	}
-
-
-
-
 }
 
 function deleteOrder($oid,$cid){
@@ -503,9 +541,9 @@ function deleteOrder($oid,$cid){
 
 	$content = ContentGetByID($cid);
 	$ctext = ContentTextGet($content->getID(), 2);
-	print	"<div id=\"orderinfo\">\n";
+	print	'<div id="ordergenericinfo">';
 	print	MTextGet($ctext->getTextID());
-	print	"</div>\n";
+	print	'</div>';
 
 }
 

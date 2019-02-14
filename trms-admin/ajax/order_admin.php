@@ -1,4 +1,5 @@
 <?php
+session_start();
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/termoscommon.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/db.inc.php';
 require $_SERVER['DOCUMENT_ROOT'] . '/trms-php/class.Orders.php'; 
